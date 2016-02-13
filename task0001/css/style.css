@@ -169,7 +169,7 @@ img.footer-info {
 body#page-blog {
 	background-color: #eeeeee;
 }
-#main {
+#page-blog #main {
 	position: relative;
 	width: 980px;
     min-height: 300px;
@@ -245,18 +245,40 @@ span.author {
 #sidebar {
 	position: absolute;
 	width: 260px;
-	top: 0;
+	top: -10px;
 	right: 0;
 }
 #sidebar > div {
-	margin: 10px 0;
+	margin-bottom: 10px;
 	background-color: #ffffff;
 }
 #sidebar-search {
 	height: 80px;
 }
-#sidebar-search input {
-/* 170+50 * 40	*/
+#sidebar-search form {
+	position: relative;
+	margin: 20px;
+}
+#sidebar-search #target-text {
+	position: absolute;
+	top: 20px;
+	width: 170px;
+	height: 40px;
+	background: url(/task0001/img/search.png) no-repeat;
+	border: 1px solid #eeeeee;
+}
+#sidebar-search #submit {
+	position: absolute;
+	top: 20px;
+	width: 50px;
+	height: 42px;
+	left: 172px;
+	border: none;
+	font-size: 18px;
+	color: #ffffff;
+}
+#sidebar-search #submit:hover {
+	background-color: #000000;
 }
 #sidebar-category {
 	border-top: 1px solid #eeeeee;
@@ -278,8 +300,6 @@ span.author {
 #sidebar-calender table.calender {
 	margin: 0 auto;
 	text-align: center;
-}
-#sidebar-calender table.calender tr {
 }
 #sidebar-calender tr td {
 	width: 2.2em;
@@ -307,8 +327,11 @@ span.author {
 #page-gallery {
 	background-color: #eeeeee;
 }
-#page-gallery #header-bg {
-    margin-bottom: 70px;
+#page-gallery #main {
+	position: relative;
+	width: 980px;
+	padding-top: 60px;
+	margin: 0 auto;
 }
 #artworks {
     position: relative;
@@ -321,7 +344,6 @@ span.author {
 #artworks * {
 	color: #ffffff;
 }
-/* -artworks-item-*/
 #artworks .item {
 	position: relative;
 	float: left;
@@ -349,20 +371,19 @@ span.author {
 #artworks .item .tag-icon {
 	float: left;
 }
-#artworks .item h2,
+#artworks .item h3,
 #artworks .item p {
 	clear: left;
 	position: relative;
-	max-width: 265px;
 	left: 48px;
 	top: -42px;
 	line-height: 1.8;
 }
-#artworks .item .title {
-	font-size: 14px;
+#artworks .item.lg p {
+	width: 22em;
 }
-#artworks .item p {
-	font-size: 12px;
+#artworks .item.sm p {
+	width: 8em;
 }
 /* -artworks-nav- */
 #aw-nav {
@@ -396,9 +417,100 @@ span.author {
 #aw-nav li.aplc {
 	border-top: 5px solid #d9a300;
 }
-
-
-/* -sidebar- */
+/* -sidebar-2 */
+#page-gallery #sidebar {
+	top: 50px;
+}
 #sidebar-ranking {
-    height: 260px;
+	padding: 15px;
+}
+#sidebar-ranking .item {
+	margin: 10px auto;
+}
+
+#sidebar-ranking .rank {
+	display: inline-block;
+	float: left;
+	width: 1.5em;
+	height: 1.5em;	
+	text-align: center;
+	background-color: #656565;
+	color: #ffffff;
+	border-radius: 50%;
+	font-size: 12px;
+}
+#sidebar-ranking .total {
+	display: inline-block;
+	position: relative;
+	float: left;
+	margin: 0 10px;
+	width: 98px;
+	height: 18px;
+	border: 1px solid #656565;
+}
+#sidebar-ranking .partial {
+	width: 90%;
+	height: 100%;
+	background-color: #656565;
+}
+.r4 .partial {
+	width: 70%;
+}
+/* ---page-about--- */
+#page-about {
+	background-color: #eeeeee;
+}
+#page-about #main {
+	position: relative;
+	width: 980px;
+	min-height: 200px;
+	margin: 70px auto;
+	padding-top: 150px;
+	background: #ffffff url(/task0001/img/stripe-bg.png) center repeat-y;
+}
+#page-about .about {
+	position: relative;
+	width: 100%;
+	margin-top: 50px;
+	bottom: 50px;
+}
+#page-about .about .icon {
+	display: block;
+	width: 100px;
+	height: 100px;
+	margin: 30px auto;
+	border-radius: 50%;
+	border: 5px solid #eeeeee;
+}
+#page-about .logo {
+	position: absolute;
+	top: -60px;
+	left: 50%;
+	margin-left: -90px;
+	width: 160px;
+	height: 160px;
+	border-radius: 50%;
+	border: 10px solid #eeeeee;
+
+}
+#page-about .about h1 {
+	margin-right: 50%;
+	padding-right: 80px;
+	text-align: right;
+}
+#page-about .about p {
+	margin: -30px 120px 60px 50%;
+	padding-left: 80px;
+	text-align: left;
+}
+#page-about .about span.year {
+	position: absolute;
+	left: 50%;
+	margin-left: -35px;
+	width: 60px;
+	border: 5px solid #eeeeee;
+	border-radius: 10px;
+	text-align: center;
+	background-color: #ffffff;
+	font-size: 12px;
 }
