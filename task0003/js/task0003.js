@@ -6,83 +6,71 @@ function Category(name) {
 	//@return {boolean} 本实例tasks数组每一项的title都与newTask不同则将newTask推入数组，并返回true；否则直接返回false
     this.addTask = function(newTask) {
         var newTitle = newTask.title;
-        for (var i in this.tasks) {
-            if (this.tasks[i].title === newTitle) {
+		var allTasksInThisCate = this.tasks;
+        for (var i in allTasksInThisCate) {
+            if (allTasksInThisCate[i].title === newTitle) {
                 return false;
             }
         }
-        this.tasks.push(newTask);
+        allTasksInThisCate.push(newTask);
         return true;
     };
 	// @param {string} option undefined或'undone'或'done'
-	// @return {number} 返回本实例tasks数组中［所有］或［done属性为假］或［done属性为真］的项数
-    this.count = function(option){
-        var c = 0;
+	// @return {array.<object>} 返回本实例tasks数组中［所有］或［done属性为假］或［done属性为真］的项构成的数组，按照date属性降序排列后返回
+    this.getTasksByStatus = function(option) {
+        var r = [];
+		var allTasksInThisCate = this.tasks;
         switch (option) {
             case undefined:
-                c = this.tasks.length;               
+                r = allTasksInThisCate;               
                 break;
             case 'undone':
-                for (var i in this.tasks) {
-                    if (this.tasks[i].done === false) {
-                        c++;
+                for (var i in allTasksInThisCate) {
+					var currTask = allTasksInThisCate[i];
+                    if (currTask.done === false) {
+                        r.push(currTask);
                     }
                 }
                 break;
            case 'done':
-                for (var i in this.tasks) {
-                    if (this.tasks[i].done === true) {
-                        c++;
+                  for (var i in allTasksInThisCate) {
+					var currTask = allTasksInThisCate[i];
+                    if (currTask.done === true) {
+                        r.push(currTask);
                     }
                 }
                 break;
         }
-        return c;
+        return r.sort(function(t1, t2){
+			var d1 = t1.date.replace('-', '');
+			var d2 = t2.date.replace('-', '');
+			if (d1 > d2) {
+				return -1;
+			} else {
+				return 1;
+			}
+		});
     };
-	// @param {string} option undefined、'undone'或'done'
-	// @return {array.<string>} 取得本实例tasks数组中［所有］或［done属性为假］或［done属性为真］的项，按date属性降序排列，返回各项title属性构成的数组
-    this.getTaskNamesAccordingToStatus = function(option) {
-        var r = [];
-        var curTask;
-        var condition =
-            option === 'undone'
-            ? false
-            : true;
-        for (var i in this.tasks) {
-            curTask = this.tasks[i];
-            if (curTask.done === condition) {
-                r.push(curTask);
-            }
-        }
-        // 按结果中每项的date属性（去掉-）重排序并返回。
-        r.sort(function(d1, d2){
-            var v1 = d1.date.replace('-', '');
-            var v2 = d2.date.replace('-', '');
-            if (v1 > v2) {
-                return -1;
-            } else {
-                return 1;
-            }
-        });
-        return r.map(function(item, index, array){
-            return item.title;
-        });
-    };
-	// @param {string} date 'xxxx-xx-xx'格式的字符串
-	// @return {array.<string>} 取得本实例tasks数组中date属性等于参数的项，返回各项title属性构成的数组
-	this.getTaskNamesAccordingToDate = function(date) {
-        var r = [];
-        var curTask;
-        for (var i in this.tasks) {
-            curTask = this.tasks[i];
-            if (curTask.date === date) {
-                r.push(curTask);
-            }
-        }
-        return r.map(function(item, index, array){
-            return item.title;
-        });
-    } 
+	//
+	this.getTasksByDate = function(date) {
+		var r = [];
+		var allTasksInThisCate = this.tasks;
+		for (var i in allTasksInThisCate) {
+			var currTask = allTasksInThisCate[i];
+			if (currTask.date === date) {
+				r.push(currTask);
+			}
+		}
+		return r;
+	}
+}
+// @param {array.<object>} taskArr 由Task实例构成的数组
+// @param {string} property 要查询的Task属性名
+// @return {array} taskArr 由taskArr的每一项的property的值构成的数组
+function getTaskProperty(taskArr, property){
+	return taskArr.map(function(item, array, index){
+		return item[property];
+	})
 }
 // 声明存储Category对象的容器
 var cateLib;
@@ -148,14 +136,7 @@ function Task(title, date, main) {
         this.done = true;
     }
 }
-// @param {array.<object>} taskArr 由Task实例构成的数组
-// @param {string} property 要查询的Task属性名
-// @return {array} taskArr 由taskArr的每一项的property的值构成的数组
-function getPropertyOfEach(taskArr, property) {
-    return taskArr.map(function(item, index, array){
-        return item[property];
-    });
-}
+
 // 将cateLib每一项的name和其中tasks数组中undone的项数写入类为catelist的ul
 // 为cateLib第一项（即默认分类）所在的元素添加active类
 function renderCategoryList() {
@@ -170,7 +151,7 @@ function renderCategoryList() {
             + '</span>'
             + ''
             + '<span class="undone">' 
-            + curCate.count('undone')
+            + curCate.getTasksByStatus('undone').length;
             + '</span>'
             + ''
             + '<img class="remove" src="img/icon-minus.png">'
@@ -188,25 +169,17 @@ function renderCategoryList() {
 function renderTasksList(option) {
     var cateName = $('.catelist .active').getElementsByClassName('name')[0].innerHTML;
     var tarCate = getCategory(cateName);
-    var tarTaskArr;
-    switch (option) {
-        case undefined: 
-            tarTaskArr = tarCate.tasks;
-            break;
-        default:
-            tarTaskArr = tarCate.getTaskNamesAccordingToStatus(option);
-            break;
-    }
+    var tarTaskArr = tarCate.getTasksByStatus(option);
     // 找到该cate下符合参数条件的task的date属性，返回去重后的数组
-    var dateArray = uniqArrayHASH(getPropertyOfEach(tarTaskArr, 'date'));
+    var dateArray = uniqArrayHASH(getTaskProperty(tarTaskArr, 'date'));
 	console.log(tarTaskArr)
 	// 添加日期标题
 	var tarInnerHtml = '';
     for (var i in dateArray) {
 		var curDate = dateArray[i];
-		// 取得该cate下date属性为该日期的项的名称数组
-		var tasksOnThisDate = tarCate.getTaskNamesAccordingToDate(curDate);
-		// 遍历数组，将每一项写入当前date所在的ul内
+		// 取得该cate下date属性为该日期的项的［名称］构成的数组
+		var tasksOnThisDate = getTaskProperty(tarCate.getTasksByDate(curDate), 'title');
+		// 遍历数组，将每一项的title属性写入当前date所在的ul内
         tarInnerHtml += '<ul class="day">'
 			+ ''
 			+ '<h1 class="date">'
@@ -221,12 +194,11 @@ function renderTasksList(option) {
     }
 	// 替换div.calender的innerHtml
 	$('#tasks .calender').innerHTML = tarInnerHtml;
-	
 }
 initCategory();
 forgeData()
 renderCategoryList()
-renderTasksList('undone')
+renderTasksList()
 ///////////////////////////////////总///////////////////////////////////
 // 响应式布局：
 function initResizingResponsive() {    
