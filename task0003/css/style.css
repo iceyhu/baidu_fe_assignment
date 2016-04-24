@@ -1,0 +1,219 @@
+/* title bg #dddddd title #9b9b9b gen bg #f2f2f2 gen focus #ffffff hr vt line #cecece date bg #fafaee */
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1.7em;
+    font-family: 'Microsoft Yahei';
+    cursor: default;
+    list-style: none;
+}
+h1 {
+    line-height: 1.5em;
+    font-weight: 500;
+}
+input,
+textarea {
+    border: none;
+}
+/* z-index [1: #cover, 2: #content, 3: .edit-alert] */
+#wrapper {
+    position: relative;
+    width: 1280px;
+    height: 600px;
+    background-color: #f2f2f2;
+}
+#title {
+    line-height: 59px;
+    font-size: 20px;
+    padding-left: 1em;
+    border-bottom: 1px solid #cecece;
+    color: #9b9b9b;
+}
+#category,
+#tasks,
+#content {
+    position: relative;
+    float: left;
+    height: 540px;
+}
+/* @category */
+#category {
+    width: 229px;
+    background-color: #f2f2f2;
+    border-right: 1px solid #cecece;
+}
+#category .switch {
+    position: relative;
+    margin: 0.5em 0;
+    line-height: 2em;
+    text-align: center;
+}
+#category .switch.active {
+    background-color: #c3c3c3;
+    font-weight: 700;
+    color: #fff;
+}
+#category .switch:hover,
+#category .switch *:hover {
+    cursor: pointer;
+}
+.undone {
+    display: inline-block;
+    position: absolute;
+    width: 24px;
+    line-height: 1.2em;
+    top: 7px;
+    right: 2.5em;
+    text-align: center;
+    background-color: #cecece;
+    color: #fff;
+    border-radius: 40%;
+    font-size: 12px;
+}
+.switch .undone {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-left: 1em;
+    background-color: #c3c3c3;
+    color: #000;
+}
+.cate {
+    position: relative;
+    line-height: 30px;
+    background: url(../img/icon-folder.png) no-repeat 20px 50%;
+    padding-left: 50px;
+}
+.cate.active {
+    background-color: #fff;
+}
+.cate .remove {
+    display: none;
+    position: absolute;
+    top: 1px;
+    right: 0.3em;
+    cursor: pointer;
+}
+#category .add,
+#tasks .add {
+    position: absolute;
+    width: 174px;
+    bottom: 0;
+    padding-left: 55px;
+    line-height: 39px;
+    background: #f2f2f2 url(../img/icon-add.png) no-repeat 15px 50%;
+    border-top: 1px solid #cecece;
+}
+#category .add:hover,
+#tasks .add:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+/* @tasks */
+#tasks {
+    width: 229px;
+    border-right: 1px solid #cecece;
+}
+#tasks .status-nav {
+    padding-left: 1.3em;
+    border-bottom: 1px solid #cecece;
+}
+#tasks .status {
+    display: inline;
+    line-height: 40px;
+    margin: 5px;
+    padding: 0 0.5em;
+}
+#tasks .status.active {
+    background-color: #ffffff;
+    border: 1px solid #cecece;
+}
+#tasks .status:hover {
+    cursor: pointer;
+}
+#tasks .calender {
+    background-color: #ffffff;
+}
+#tasks .calender .day {
+    list-style: none;
+}
+#tasks .calender .day .date {
+    line-height: 2em;
+    text-indent: 1em;
+    font-size: 14px;
+    background-color: #fafaee;
+}
+#tasks .calender .day .task {
+    line-height: 2em;
+    text-indent: 3em;
+    font-size: 12px;
+}
+/* @content */
+#content {
+    width: 820px;
+    z-index: 2;
+}
+#content .title,
+#content .date,
+#content .main {
+    width: 100%;
+    line-height: 49px;
+    text-indent: 20px;
+    border-bottom: 1px solid #cecece;
+}
+#content .title {
+    font-size: 18px;
+}
+#content .date {
+    background-color: #fafaee;
+}
+#content .main {
+    background-color: #ffffff;
+    height: 440px;
+}
+#content .title.editable,
+#content .date.editable,
+#content .main.editable {
+    color: #c3c3c3;
+    resize: none;
+}
+#content .title.editable {
+    background-color: #ededed;
+}
+#content .done, 
+#content .save {
+    position: absolute;
+    top: 12px;
+    right: 70px;
+    cursor: pointer;
+}
+#content .edit,
+#content .cancel {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    cursor: pointer;
+}
+/* @@@ */
+.alert {
+/*    display: none;*/
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    margin-left: -10em;
+    width: 20em;
+    line-height: 3em;
+    text-align: center;
+    background-color: red;
+    color: #fff;
+    z-index: 3;
+}
+#cover {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
