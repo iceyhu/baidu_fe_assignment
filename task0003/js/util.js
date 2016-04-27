@@ -439,24 +439,22 @@ function addClass(element, newClassName) {
         return false;
     }
 }
-function removeClass(element, tarClass) {
+function removeClass(element, oldClassName) {
     if (element.nodeType === 1 
-        && typeof tarClass === "string" 
+        && typeof oldClassName === "string" 
        ) {
         var curClass = element.getAttribute("class");
-        // return if it has no CLASS
         if (curClass === null) {
             return true;
         } else {
-            var classArr = curClass.split(' ');
-            var tarPos = classArr.indexOf(tarClass);
-            // return if tar class wasn't found
-            if (tarPos === -1) {
+            var oldClassStrPos = curClass.split(' ').indexOf(oldClassName);
+            if (oldClassStrPos === -1) {
                 return true;
             } else {
-                classArr.splice(tarPos, 1);
-                element.setAttribute('class', classArr.join(' '));
-                return true;
+                var newClass = curClass.split(' ');
+                newClass.splice(oldClassStrPos, 1);
+                element.setAttribute('class', newClass);
+                return newClass;
             }
         }        
     } else {
@@ -668,4 +666,7 @@ function isValidDate(str) {
         }
     }
     return false;
+}
+function $$(str) {
+    console.log(str)
 }

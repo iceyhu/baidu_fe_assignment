@@ -16,7 +16,7 @@ input,
 textarea {
     border: none;
 }
-/* z-index [1: #cover, 2: #content *, 3: .info-area] */
+/* z-index [1: #cover, 2: #content, 3: .edit-alert] */
 #wrapper {
     position: relative;
     width: 1280px;
@@ -58,7 +58,7 @@ textarea {
 #category .switch *:hover {
     cursor: pointer;
 }
-span.undone {
+.undone {
     display: inline-block;
     position: absolute;
     width: 24px;
@@ -71,7 +71,7 @@ span.undone {
     border-radius: 40%;
     font-size: 12px;
 }
-.switch span.undone {
+.switch .undone {
     position: relative;
     top: 0;
     right: 0;
@@ -79,19 +79,19 @@ span.undone {
     background-color: #c3c3c3;
     color: #000;
 }
-li.cate {
+.cate {
     position: relative;
     line-height: 30px;
     background: url(../img/icon-folder.png) no-repeat 20px 50%;
     padding-left: 50px;
 }
-li.cate.active {
+.cate.active {
     background-color: #fff;
 }
-li.cate .remove {
+.cate .remove {
     display: none;
     position: absolute;
-    top: 2px;
+    top: 1px;
     right: 0.3em;
     cursor: pointer;
 }
@@ -108,7 +108,7 @@ li.cate .remove {
 #category .add:hover,
 #tasks .add:hover {
     cursor: pointer;
-    background-color: #fafaee;
+    text-decoration: underline;
 }
 /* @tasks */
 #tasks {
@@ -116,7 +116,7 @@ li.cate .remove {
     border-right: 1px solid #cecece;
 }
 #tasks .status-nav {
-    padding-left: 1.1em;
+    padding-left: 1.3em;
     border-bottom: 1px solid #cecece;
 }
 #tasks .status {
@@ -124,54 +124,36 @@ li.cate .remove {
     line-height: 40px;
     margin: 5px;
     padding: 0 0.5em;
-    border: 1px solid transparent;
 }
 #tasks .status.active {
     background-color: #ffffff;
-    border-color: #cecece;
+    border: 1px solid #cecece;
 }
 #tasks .status:hover {
     cursor: pointer;
 }
-.tasklist {
+#tasks .calender {
     background-color: #ffffff;
 }
-.tasklist .day {
+#tasks .calender .day {
     list-style: none;
 }
-.tasklist .day .date {
+#tasks .calender .day .date {
     line-height: 2em;
     text-indent: 1em;
-    font-size: 12px;
+    font-size: 14px;
     background-color: #fafaee;
-    font-style: italic;
 }
-.tasklist .day .task {
+#tasks .calender .day .task {
     line-height: 2em;
     text-indent: 3em;
     font-size: 12px;
 }
-.tasklist .day .task:hover {
-    cursor: pointer;
-} 
-.tasklist .day .task.active {
-    background-color: #cecece;
-    font-weight: 700;
-}
-.tasklist .day .task.done {
-    color: green;
-    text-decoration: line-through;
-} 
 /* @content */
 #content {
     width: 820px;
     z-index: 2;
 }
-/*
-#content * {
-    z-index: 2;
-}
-*/
 #content .title,
 #content .date,
 #content .main {
@@ -199,7 +181,7 @@ li.cate .remove {
 #content .title.editable {
     background-color: #ededed;
 }
-#content .mark, 
+#content .done, 
 #content .save {
     position: absolute;
     top: 12px;
@@ -214,7 +196,8 @@ li.cate .remove {
     cursor: pointer;
 }
 /* @@@ */
-.info-area {
+.alert {
+/*    display: none;*/
     position: absolute;
     top: 9px;
     left: 50%;
@@ -222,14 +205,9 @@ li.cate .remove {
     width: 20em;
     line-height: 3em;
     text-align: center;
+    background-color: red;
     color: #fff;
     z-index: 3;
-}
-.bad {
-    background-color: palevioletred;
-}
-.good {
-    background-color: skyblue;
 }
 #cover {
     display: none;

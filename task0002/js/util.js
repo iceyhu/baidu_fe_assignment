@@ -474,7 +474,6 @@ function getObjectLength(obj) {
     }
     return false;
 }
-// 先想出来的，好low
 function trim(str) {
     if (typeof str === "string" 
         && str !== ""
@@ -490,60 +489,67 @@ function trim(str) {
     }
     return false;
 }
-// 好一些的
-function trim2(str) {
-    return str.replace(/(^\s+)|(\s+$)/, '');
-}
 function simpleTrim(str) {
     if (typeof str === "string") {
-        var i;
-        var result = "";
+        var i,
+            lt,
+            rt;
+            result = "";
         for (i = 0; i < str.length; i++) {
             if ((str[i] !== " ")) {
-                var lt = i;
+                lt = i;
                 break;
             }
         }
         for (i = str.length - 1; i > -1; i--) {
             if ((str[i] !== " ")) {
-                var rt = i;
+                rt = i;
                 break;
             }
         }        
-        return str.slice(lt, rt + 1);
+        return str.slice(lt, rt+1);
     }
     return false;
 }
-// 构建并返回去重的新数组。。有点low，旧数组也没有被清理
+// 返回了去重的新数组，优点是简单，缺点是原数组未被清理
 function uniqArrayHASH(arr) {
     if (Array.isArray(arr)) {
-        var r = [];
+        var result = [];
         for (var i = 0, l = arr.length; i < l; i++) {
-            if (r.indexOf(arr[i]) === -1) {
-                r.push(arr[i]);
+            if (result.indexOf(arr[i]) === -1) {
+                result.push(arr[i]);
             }
         }
-        return r;
+        return result;
     }
     return false;
 }
-// 效率会高一点？但还是没清理旧数组
+// 若给定数组的第一项与之后任一项相同，则移除第一项，返回true；
+// 未重复或数组长度为1，返回false；
+function removeFisrtItemIfDuplicate(arr) {
+    var t = arr[0];
+    for (var i = 1, l = arr.length; i < l; i++) {
+        if (arr[i] === t) {
+            arr.shift();
+            break;
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
 function uniqArray(arr) {
     if (Array.isArray(arr)) {
-        var o = {};
-        var r = [];        
-        for (var i = 0, l = arr.length; i < l; i++) {
-            if (o[arr[i]] === undefined) {
-                r.push(arr[i]);
-                o[arr[i]] = true;
-            }    
+        if (removeFisrtItemIfDuplicate(arr)) {
+            console.log('ff')
         }
-        return r;
     } else {
         return false;
     }
 }
-var a = [2, 1, 'f', 'c', 'c', 3, 'f', 1, 'f'];
+var a = [1, 'f', 'c', 3, 'f', 1];
+console.log(removeFisrtItemIfDuplicate(a))
+
 function cloneObject(src) {
     var result = null;
     switch (typeof src) {
