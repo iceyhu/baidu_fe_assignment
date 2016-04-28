@@ -11,24 +11,26 @@
         <div id="wrapper">
             <p id="title">GTD Tools</p>
             <div id="category">
-                <h1 class="syrw switch">
-                    <span class="name">所有任务</span>
-                    <span class="undone">0</span>
-                </h1>
-                <h1 class="fllb switch active">
+                <ul>
+                    <li class="all-cate">
+                        <span class="name">所有任务</span>
+                        <span class="undone">0</span>
+                    </li>                   
+                </ul>
+                <h1 class="fllb">
                     <span class="name">分类列表</span>
                 </h1>  
                 <ul class="catelist">                  
 <!--
-                     <li class="cate">
-                        <span class="name">默认分类</span>
-                        <span class="undone">0</span>
-                        <img class="remove" src="img/icon-minus.png">
+                    <li class="cate">
+                        <span class="name cate">默认分类</span>
+                        <span class="undone cate">0</span>
+                        <img class="remove" src="img/icon-times.png">
                     </li>
                     <li class="cate">
-                        <span class="name">百度IFE</span>
-                        <span class="undone">10</span>
-                        <img class="remove" src="img/icon-minus.png">
+                        <span class="name cate">百度IFE</span>
+                        <span class="undone cate">10</span>
+                        <img class="remove" src="img/icon-times.png">
                     </li>                   
 -->
                 </ul>
@@ -36,11 +38,12 @@
             </div>
             <div id="tasks">
                 <ul class="status-nav">
-                    <li class="status active">所有</li>                    
-                    <li class="status">未完成</li>                    
-                    <li class="status">已完成</li>                    
+                    <li class="status all active">所有</li>                    
+                    <li class="status undone">未完成</li>                    
+                    <li class="status done">已完成</li>                    
                 </ul>
-                <div class="calender">
+                <div class="tasklist">
+<!--
                     <ul class="day">
                         <h1 class="date">2015-04-30</h1>
                         <li class="task">to-do </li>
@@ -57,17 +60,19 @@
                         <li class="task">to-do </li>
                         <li class="task">to-do </li>
                     </ul>
+-->
                 </div>
                 <p class="add">新增任务</p>
             </div>
             <div id="content">
-                <h1 class="title">to-do 6</h1>
-                <h1 class="date">任务日期： 2015-04-30</h1>
-                <p class="main">完成task3的编码工作。</p>
-                <img class="done" src="img/icon-done.png">
+                <h1 class="title">.</h1>
+                <h1 class="date">.</h1>
+                <p class="main">点击「新增任务」以创建新任务。</p>
+                <img class="mark" src="img/icon-done.png">
                 <img class="edit" src="img/icon-pencil.png">
             </div>
-            <p class="alert"></p>
+            <p class="info-area good"></p>
+            <p class="info-area bad"></p>
         </div> 
         <script src="js/util.js"></script>
         <script src="js/task0003.js"></script>

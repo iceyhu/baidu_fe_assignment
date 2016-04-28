@@ -1,0 +1,31 @@
+<p class="fuck shit cao"></p>
+
+<script>
+    removeClass(document.getElementsByTagName('p')[0], 'fuck')
+    console.log(document.getElementsByTagName('p')[0].getAttribute('class'))
+    function removeClass(element, tarClass) {
+    if (element.nodeType === 1 
+        && typeof tarClass === "string" 
+       ) {
+        var curClass = element.getAttribute("class");
+        // return if it has no CLASS
+        if (curClass === null) {
+            return true;
+        } else {
+            var classArr = curClass.split(' ');
+            var tarPos = classArr.indexOf(tarClass);
+            // return if tar class wasn't found
+            if (tarPos === -1) {
+                return true;
+            } else {
+                classArr.splice(tarPos, 1);
+                element.setAttribute('class', classArr.join(' '));
+                return true;
+            }
+        }        
+    } else {
+        return false;
+    }
+
+}
+</script>

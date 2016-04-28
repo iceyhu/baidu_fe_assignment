@@ -16,7 +16,7 @@ input,
 textarea {
     border: none;
 }
-/* z-index [1: #cover, 2: #content, 3: .edit-alert] */
+/* z-index [1: #cover, 2: #content *, 3: .info-area] */
 #wrapper {
     position: relative;
     width: 1280px;
@@ -43,22 +43,33 @@ textarea {
     background-color: #f2f2f2;
     border-right: 1px solid #cecece;
 }
-#category .switch {
+#category .all-cate {
+    position: relative;
+    line-height: 30px;
+    padding-left: 53px;
+    margin-top: 8px;
+    background: url(../img/icon-bag.png) no-repeat 20px 50%;
+    font-weight: 700;
+}
+#category .all-cate.active {
+    background-color: #fff;
+}
+#category .all-cate:hover,
+#category .all-cate *:hover {
+    cursor: pointer;
+}
+#category .fllb {
     position: relative;
     margin: 0.5em 0;
     line-height: 2em;
     text-align: center;
-}
-#category .switch.active {
-    background-color: #c3c3c3;
+    background-color: #fafaee;
+    border-top: 1px solid #cecece;
+    border-bottom: 1px solid #cecece;
     font-weight: 700;
-    color: #fff;
 }
-#category .switch:hover,
-#category .switch *:hover {
-    cursor: pointer;
-}
-.undone {
+
+span.undone {
     display: inline-block;
     position: absolute;
     width: 24px;
@@ -71,7 +82,7 @@ textarea {
     border-radius: 40%;
     font-size: 12px;
 }
-.switch .undone {
+.switch span.undone {
     position: relative;
     top: 0;
     right: 0;
@@ -79,19 +90,23 @@ textarea {
     background-color: #c3c3c3;
     color: #000;
 }
-.cate {
+li.cate {
     position: relative;
     line-height: 30px;
     background: url(../img/icon-folder.png) no-repeat 20px 50%;
-    padding-left: 50px;
+    padding-left: 53px;
 }
-.cate.active {
+li.cate:hover,
+li.cate *:hover {
+    cursor: pointer;
+}
+li.cate.active {
     background-color: #fff;
 }
-.cate .remove {
+li.cate .remove {
     display: none;
     position: absolute;
-    top: 1px;
+    top: 2px;
     right: 0.3em;
     cursor: pointer;
 }
@@ -108,7 +123,7 @@ textarea {
 #category .add:hover,
 #tasks .add:hover {
     cursor: pointer;
-    text-decoration: underline;
+    background-color: #fafaee;
 }
 /* @tasks */
 #tasks {
@@ -116,7 +131,7 @@ textarea {
     border-right: 1px solid #cecece;
 }
 #tasks .status-nav {
-    padding-left: 1.3em;
+    padding-left: 1.1em;
     border-bottom: 1px solid #cecece;
 }
 #tasks .status {
@@ -124,31 +139,44 @@ textarea {
     line-height: 40px;
     margin: 5px;
     padding: 0 0.5em;
+    border: 1px solid transparent;
 }
 #tasks .status.active {
     background-color: #ffffff;
-    border: 1px solid #cecece;
+    border-color: #cecece;
 }
 #tasks .status:hover {
     cursor: pointer;
 }
-#tasks .calender {
+.tasklist {
     background-color: #ffffff;
 }
-#tasks .calender .day {
+.tasklist .day {
     list-style: none;
 }
-#tasks .calender .day .date {
+.tasklist .day .date {
     line-height: 2em;
     text-indent: 1em;
-    font-size: 14px;
+    font-size: 12px;
     background-color: #fafaee;
+    font-style: italic;
 }
-#tasks .calender .day .task {
+.tasklist .day .task {
     line-height: 2em;
-    text-indent: 3em;
+    text-indent: 2.5em;
     font-size: 12px;
 }
+.tasklist .day .task:hover {
+    cursor: pointer;
+} 
+.tasklist .day .task.active {
+    background-color: #c3c3c3;
+    color: #fff;
+}
+.tasklist .day .task.done {
+    color: green;
+    text-decoration: line-through;
+} 
 /* @content */
 #content {
     width: 820px;
@@ -181,7 +209,7 @@ textarea {
 #content .title.editable {
     background-color: #ededed;
 }
-#content .done, 
+#content .mark, 
 #content .save {
     position: absolute;
     top: 12px;
@@ -196,8 +224,7 @@ textarea {
     cursor: pointer;
 }
 /* @@@ */
-.alert {
-/*    display: none;*/
+.info-area {
     position: absolute;
     top: 9px;
     left: 50%;
@@ -205,9 +232,14 @@ textarea {
     width: 20em;
     line-height: 3em;
     text-align: center;
-    background-color: red;
     color: #fff;
     z-index: 3;
+}
+.bad {
+    background-color: palevioletred;
+}
+.good {
+    background-color: skyblue;
 }
 #cover {
     display: none;
