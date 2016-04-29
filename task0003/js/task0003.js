@@ -28,17 +28,14 @@ function resizeToWindowSize() {
     if (wdHt <= 600) {
         wdHt = 600;
     }
-    
     var wrap = $('#wrapper');    
     var d1 = $('#category');    
     var d2 = $('#tasks');     
     var d2in = $('.tasklist');    
     var d3 = $('#content');
     var d3in = $('#content .main');   
-    
     wrap.style.width = wdWt + 'px';
     d3.style.width = (wdWt - 460) + 'px';
-
     wrap.style.height = wdHt + 'px';        
     d2.style.height = d1.style.height = (wdHt - 60) + 'px'; 
     d2in.style.height = (wdHt - 140) + 'px';
@@ -177,9 +174,10 @@ var globalTasks = [];
 尝试获取获取本地存储以更新二容器，无则制造数据填充之
 */
 function loadFromCache() {
+	console.log(false)
     var c = localStorage.getItem('cateCache');
     var t = localStorage.getItem('taskCache');
-    if (c === null) {
+    if (t === null) {
         addCategory(new Category('默认分类'));
         addCategory(new Category('Work'));
         addCategory(new Category('Social'));
@@ -350,10 +348,9 @@ function getCategoryByCateName(cateName) {
 */
 function getTargetTasksArray(){
     var cateName = $('#category .active').getElementsByClassName('name')[0].innerHTML;
-    var cateFound = getCategoryByCateName(cateName);
-    return cateFound === null
+    return cateName === '所有任务'
         ? globalTasks
-        : cateFound.tasks;
+        : getCategoryByCateName(cateName).tasks;
 }
 /*
 @return {object} 返回高亮的tasklist子元素所对应的task对象，无高亮返回null
@@ -373,7 +370,14 @@ function getActiveTask(){
 高亮cateLib第一项所在的元素
 */
 function renderCategoryList() {
-    var tarInnerHtml = '';
+    var tarInnerHtml = '<li class="cate all">'
+		+ '<span class="name cate">'
+		+ '所有任务'
+		+ '</span>'
+		+ '<span class="undone cate">'
+		+ '0'
+		+ '</span>'
+		+ '</li>';
     var undoneCount = 0;    
     for (var i in cateLib) {
         var currCate = cateLib[i];
@@ -389,12 +393,12 @@ function renderCategoryList() {
             + '</li>';
         undoneCount += currUndoneCount;
     }
-    // 渲染分类列表
     var cateList = $('.catelist');
     cateList.innerHTML = tarInnerHtml;
-    addClass(cateList.childNodes[0], 'active');
-    // 渲染all
-    $('.all-cate .undone').innerHTML = undoneCount;
+    addClass(cateList.childNodes[1], 'active');
+	addClass(cateList.childNodes[1], 'default');
+    // 渲染全部undone数量
+    $('.all .undone').innerHTML = undoneCount;
 }
 /* 
 @param {string=} status undefined或'done'或'undone'
@@ -487,14 +491,7 @@ function activateTargetLi(targetLi) {
             tarList = $('.status-nav');
             break;
     }
-    var activeTargetLi = tarList.getElementsByClassName('active')[0];
-    if (activeTargetLi !== undefined) {
-        removeClass(tarList.getElementsByClassName('active')[0], 'active');        
-    } else {
-        // 下面的高亮li未定义，说明all已高亮，取消之
-        removeClass($('.all-cate'), 'active');
-    }    
-    // 无论如何，把事件目标高亮
+	removeClass(tarList.getElementsByClassName('active')[0], 'active');        
     addClass(targetLi, 'active'); 
 }
 /*
@@ -535,28 +532,7 @@ function activateTargetTaskName(taskName) {
 ///// 左 /////
 
 /*
-click .all-cate时
-*/
-$.click('.all-cate', function(e){
-    // 高亮中部“所有”
-    activateTargetLi($('.status.all'));
-    var et = e.target;
-    var target = 
-        hasClass(et, 'all-cate')
-        ? et
-        : et.parentElement;
-    // 如目标所在cate已高亮则返回 
-    if (hasClass(target, 'active')) {
-        return;
-    }    
-    // 否则移除catelist的高亮，高亮目标
-    removeClass($('.catelist').getElementsByClassName('active')[0], 'active');
-    addClass(target, 'active');
-    renderTasksList();
-    renderTask();
-});
-/*
-hover在【非第一个子元素】li.cate上时显示移除按钮，离开时隐藏
+hover在无default和all类的li.cate上时显示移除按钮，离开时隐藏
 */
 $.delegateByClassName('.catelist', 'cate', 'mouseover', function(e){
     var et = e.target;
@@ -564,9 +540,11 @@ $.delegateByClassName('.catelist', 'cate', 'mouseover', function(e){
         et.nodeName === 'LI'
         ? et
         : et.parentElement;
-    if (targetLi.previousElementSibling === null) {
-        return;
-    }
+	if (hasClass(targetLi, 'all')
+	   	|| hasClass(targetLi, 'default')
+	   ) {
+		return;
+	}
     targetLi.getElementsByClassName('remove')[0].style.display = 'block';
 });
 $.delegateByClassName('.catelist', 'cate', 'mouseout', function(e){
@@ -575,6 +553,11 @@ $.delegateByClassName('.catelist', 'cate', 'mouseout', function(e){
         et.nodeName === 'LI'
         ? et
         : et.parentElement;
+	if (hasClass(targetLi, 'all')
+	   	|| hasClass(targetLi, 'default')
+	   ) {
+		return;
+	}
     targetLi.getElementsByClassName('remove')[0].style.display = 'none';
 });
 /*
@@ -608,7 +591,7 @@ click .remove按钮上时confirm是否删除此cate，确认后删除该cate下�
 */
 $.delegateByClassName('.catelist', 'remove', 'click', function(e){
     var et = e.target;
-    var tarCateName = et.parentElement.getElementsByClassName('name')[0].innerHTML;
+    var tarCateName = et.previousElementSibling.previousElementSibling.innerHTML;
     var c = confirm('将同时删除分类「' + tarCateName + '」下的所有任务。继续吗？。');
     if (c === true) {
         var tarCate = getCategoryByCateName(tarCateName);
@@ -690,8 +673,8 @@ click .add按钮后
 */
 $.click('#tasks .add', function(e){
     // 左侧.all高亮时不允许新建任务
-    if (hasClass($('#category .all-cate'), 'active')) {
-        showInfo('bad', '请选择一个分类。');
+    if (hasClass($('.cate.all'), 'active')) {
+        showInfo('bad', '请先选择一个分类。');
         return;
     }
     // 改写‘正在编辑’状态为false
@@ -825,11 +808,16 @@ window.onload = function(){
 	loadFromCache();
     renderCategoryList();
     renderTasksList();
-    renderTask();    
+    renderTask(); 
+	// 清理缓存方法的绑定
+	$.click('#title', function(){
+		localStorage.clear();
+		showInfo('bad', '清理完成。');
+	});
+	// 提示清理缓存方法
+	showInfo('bad', '点击「GTD Tools」可清理本地缓存。');
 };
+// 窗口大小改变时作出响应
 window.onresize = function(){
     resizeToWindowSize();
 };
-$.click('#title', function(){
-	localStorage.clear();
-});
