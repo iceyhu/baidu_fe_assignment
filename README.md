@@ -30,3 +30,6 @@ Tasks specified by baidu-ife.
 
 @Feb 8, 2016
 - 提交task0002基本完成的编码。
+
+@April 29, 2016
+- 提交task0003基本完成的编码。
