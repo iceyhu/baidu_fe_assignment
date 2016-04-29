@@ -49,19 +49,22 @@ function resizeToWindowSize() {
 */
 var contentHtmlUtil = (function(){
     return {
-        // 
-        isEditing : false;
+        // 处于编辑状态为真，处于新建状态为假
+        isEditing : false,
+        // 正在编辑的task之引用
+        taskUnderEditing : null,
         // 存档（用于编辑）
         archiveToEdit : '',
         // 存档（用于显示）
         archiveToDisplay : '',        
         // 以如上两种格式存储当前#content
         save : function(){
+            var taskName = $('#content .title').innerHTML;
             this.archiveToDisplay = $('#content').innerHTML;
             // 以当前的三处innerHtml填充编辑时的目标
             this.archiveToEdit = ''
-                + '<input type="input" class="title editable" placeholder="标题（18个字以内）" maxlength=18 value="'
-                + $('#content .title').innerHTML
+                + '<input type="input" class="title editable" placeholder="标题（22个字以内）" maxlength=22 value="'
+                + taskName
                 + '">'
                 + '<input type="input" class="date editable" placeholder="日期（yyyy-mm-dd格式）" maxlength=10 value="'
                 + $('#content .date').innerHTML
@@ -71,10 +74,14 @@ var contentHtmlUtil = (function(){
                 + '</textarea>'
                 + '<img class="save" src="img/icon-tick.png">'
                 + '<img class="cancel" src="img/icon-times.png">';
+            // 保存task引用
+            this.taskUnderEditing = globalTasks.filter(function(item){
+                return item.title === taskName;
+            })[0];
         },
         // 新建任务时的内容
         contentWhenAddingNew : ''
-            + '<input type="input" class="title editable" placeholder="标题（18个字以内）" maxlength=18>'
+            + '<input type="input" class="title editable" placeholder="标题（22个字以内）" maxlength=22>'
             + '<input type="input" class="date editable" placeholder="日期（yyyy-mm-dd格式）" maxlength=10>'
             + '<textarea class="main editable" placeholder="正文（500个字以内）" maxlength=500>'
             + '</textarea>'
@@ -113,14 +120,27 @@ function replaceContentHtml(targetHtml, coverOption) {
     resizeToWindowSize();
 }
 /*
+@param {object} task1 Task实例
+@param {object} task2 Task实例
+@return {number} date属性去掉'-'后值较大的参数排在前面
+*/
+function dateDescending(task1, task2){
+    if (task1.date.replace('-', '') > task2.date.replace('-', '')) {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+/*
+@param {boolean} alsoCheckDuplicate 查询同名task是否已存在
 @return {boolean} 标题、日期和正文均符合输入要求时返回true；否则显示错误信息并返回false
 */
-function checkTaskInput(){
-    var t = $('#content .title').value;
+function validateInput(alsoCheckDuplicate){
+    var t = trim2($('#content .title').value);
     var d = $('#content .date').value;
-    var m = $('#content .main').value;
-    if (!t.match(/^.{1,18}$/)) {
-        showInfo('bad', '任务标题长度应在1至18字之间。')
+    var m = trim2($('#content .main').value);
+    if (!t.match(/^.{1,22}$/)) {
+        showInfo('bad', '任务标题长度应在1至22字之间。')
         return false;
     }
     if (!isValidDate(d)) {
@@ -131,13 +151,15 @@ function checkTaskInput(){
         showInfo('bad', '任务正文长度应在1至500字之间。')
         return false;
     }
-    // 若输入的title与当前高亮的cate的tasks中任意一项的title相同则报错
-    var isDuplicated = allFuckingTasks.some(function(item){
-        return item.title === t;
-    })
-    if (isDuplicated) {
-        showInfo('bad', '已存在相同名称的任务。')
-        return false;
+    if (alsoCheckDuplicate === true) {
+        // 若输入的title与当前高亮的cate的tasks中任意一项的title相同则报错
+        var isDuplicated = globalTasks.some(function(item){
+            return item.title === t;
+        });
+        if (isDuplicated) {
+            showInfo('bad', '已存在相同名称的任务。')
+            return false;
+        }
     }        
     return true;
 }
@@ -147,13 +169,72 @@ function checkTaskInput(){
 /////////////////////////////
 
 /*
-声明存储Category对象的容器
+建立cate和task的容器
 */
 var cateLib = [];
+var globalTasks = [];
 /*
-声明存储所有对象的容器
+尝试获取获取本地存储以更新二容器，无则制造数据填充之
 */
-var allFuckingTasks = [];
+function loadFromCache() {
+    var c = localStorage.getItem('cateCache');
+    var t = localStorage.getItem('taskCache');
+    if (c === null) {
+        addCategory(new Category('默认分类'));
+        addCategory(new Category('Work'));
+        addCategory(new Category('Social'));
+        addCategory(new Category('Trifle'));
+        var defa1 = new Task('Date with my GF', '2017-02-14', 'Wait. I ain\'t got none.');
+        var defa2 = new Task('Burger King', '2017-04-01', 'Haven\'t had that for long.');
+        cateLib[0].addTask(defa1);
+        cateLib[0].addTask(defa2);
+        defa1.done = true;
+        var work1 = new Task('Finish task 0003', '2016-04-30', 'Here is some content.');
+        var work2 = new Task('Write report', '2016-05-30', 'He he he.');
+        cateLib[1].addTask(work1);
+        cateLib[1].addTask(work2);
+        var soci1 = new Task('Meet college pals', '2016-05-30', 'And have some beer.');
+        var soci2 = new Task('Go to Jake\'s wedding', '2016-10-01', 'How much should it cost me again?');
+        cateLib[2].addTask(soci1);
+        cateLib[2].addTask(soci2);
+        var trif1 = new Task('Buy new shampoo', '2017-02-14', 'That CLEAR one.');
+        var trif2 = new Task('Have a haircut', '2016-06-01', 'To celebrate Children\'s day.');
+        cateLib[3].addTask(trif1);
+        cateLib[3].addTask(trif2);
+    } else {
+        cateLib = JSON.parse(c, function(k, v){
+			switch (k) {
+				case 'addTask':
+				case 'getTask':
+				case 'getTasksByStatus':
+				case 'getTasksByDate':
+					return eval('(' + v + ')');
+				default:
+					return v;
+			}
+		});
+		globalTasks = JSON.parse(t);
+	}
+}
+/*
+保存二容器的json至本地存储
+*/
+function saveToCache() {
+	var c = JSON.stringify(cateLib, function(k, v){
+		switch (k) {
+			case 'addTask':
+			case 'getTask':
+			case 'getTasksByStatus':
+			case 'getTasksByDate':
+				return v.toString();
+			default:
+				return v;
+		}
+	});
+    localStorage.setItem('cateCache', c);
+    var t = JSON.stringify(globalTasks);
+	localStorage.setItem('taskCache', t);
+}
 /*
 @class Task构造器
 */
@@ -162,9 +243,6 @@ function Task(title, date, main) {
     this.date = date;
     this.main = main;
     this.done = false;
-    this.markAsDone = function(){
-        this.done = true;
-    }
 }
 /*
 @class Category构造器
@@ -178,27 +256,29 @@ function Category(name) {
     */
     this.addTask = function(newTask) {
         var newTitle = newTask.title;
-        for (var i in allFuckingTasks) {
-            if (allFuckingTasks[i].title === newTitle) {
-                return false;
-            }
+        var r = globalTasks.some(function(item){
+            return item.title === newTitle;
+        });
+        if (r === false) {
+            this.tasks.push(newTask);
+            this.tasks.sort(dateDescending);
+            globalTasks.push(newTask);
+            globalTasks.sort(dateDescending);
+            return true;
         }
-        this.tasks.push(newTask);
-        allFuckingTasks.push(newTask);
-        return true;
+        return false;
     };
     /*
     @param {string} taskName 要查询的task的title
 	@return {object} 找到本实例tasks数组中title属性与参数相同的项并返回；否则返回null
     */
     this.getTask = function(taskName) {
-        var allTasksInThisCate = this.tasks;
-        for (var i in allTasksInThisCate) {
-            if (allTasksInThisCate[i].title === taskName) {
-                return allTasksInThisCate[i];
-            }
-        }
-        return null;
+        var r = this.tasks.filter(function(item){
+            return item.title === taskName;
+        })[0];
+        return r !== undefined
+            ? r
+            : null;
     }
     /*
     @param {string=} status undefined或'undone'或'done'
@@ -206,114 +286,59 @@ function Category(name) {
     */
     this.getTasksByStatus = function(status) {
         var r = [];
-		var allTasksInThisCate = this.tasks;
         switch (status) {
             case undefined:
-                r = allTasksInThisCate;               
+                r = this.tasks;               
                 break;
             case 'undone':
-                for (var i in allTasksInThisCate) {
-					var currTask = allTasksInThisCate[i];
-                    if (currTask.done === false) {
-                        r.push(currTask);
-                    }
-                }
+                r = this.tasks.filter(function(item){
+                    return item.done === false;
+                })
                 break;
            case 'done':
-                  for (var i in allTasksInThisCate) {
-					var currTask = allTasksInThisCate[i];
-                    if (currTask.done === true) {
-                        r.push(currTask);
-                    }
-                }
+                r = this.tasks.filter(function(item){
+                    return item.done === true;
+                })
                 break;
         }
-        return r.sort(function(t1, t2){
-			var d1 = t1.date.replace('-', '');
-			var d2 = t2.date.replace('-', '');
-			if (d1 > d2) {
-				return -1;
-			} else {
-				return 1;
-			}
-		});
+        return r.sort(dateDescending);
     };
 	/*
     @param {string} date 'yyyy-mm-dd'格式的字符串
     @return {array.<object>} 返回本实例tasks中date属性与参数相同的项构成的数组
     */
 	this.getTasksByDate = function(date) {
-		var r = [];
-		var allTasksInThisCate = this.tasks;
-		for (var i in allTasksInThisCate) {
-			var currTask = allTasksInThisCate[i];
-			if (currTask.date === date) {
-				r.push(currTask);
-			}
-		}
-		return r;
+        return this.tasks.filter(function(item){
+            return item.date === date;
+        });
 	}
 }
 /*
 @param {object} newCate Category实例
-@return {boolean} cateLib每一项的name属性都与参数的name属性不同，则将参数推入，并返回true；否则返回false
+@return {boolean} cateLib每一项的name属性都与参数的name属性不同，则将分类推入，并返回true；否则返回false
 */
 function addCategory(newCate) {
-    var newName = trim2(newCate.name);
-    for (var i in cateLib) {
-        if (cateLib[i].name === newName) {
-            return false;
-        }
+    var newName = newCate.name;
+    var r = cateLib.some(function(item){
+        return item.name === newName;
+    });
+    if (r === false) {
+        cateLib.push(newCate);
+        return true;
     }
-    cateLib.push(newCate);
-	return true;
+    return false;
 }
 /*
 @param {string} cateName 要查询的类别的name
 @return {object} 遍历cateLib，发现第一个name与参数相同的项则返回其引用；否则返回null
 */
 function getCategoryByCateName(cateName) {
-    for (var i in cateLib) {
-        if (cateLib[i].name === cateName) {
-            return cateLib[i];
-        }
-    }
-    return null;
-}
-/*
-@param {array.<object>=} localLib undefined或由Category实例构成的数组
-@return {array.<object>} 无参数时将cateLib设为含一个Category对象的默认数组；否则设为参数的引用
-*/
-function initCategory(localLib) {
-	cateLib = 
-        localLib === undefined
-        ? [new Category('默认分类')]
-        : localLib;
-}
-/*
-添加若干Category和Task的实例
-*/
-function forgeData() {
-    addCategory(new Category('工作'));
-    addCategory(new Category('社交'));
-    addCategory(new Category('生活'));
-    var defa1 = new Task('Dinner with my chick', '2017-02-14', 'wait i ain\'t got none.');
-	var defa2 = new Task('Burger King', '2017-04-01', 'haven\'t had that for long.');
-    cateLib[0].addTask(defa1);
-    cateLib[0].addTask(defa2);
-    defa1.markAsDone();
-    var work1 = new Task('Finish task 5147', '2016-04-30', 'here is some content');
-    var work2 = new Task('Write report', '2016-04-28', 'He he he.');
-    cateLib[1].addTask(work1);
-    cateLib[1].addTask(work2);
-    var soci1 = new Task('Meet college pals', '2016-05-30', 'and have some beer.');
-    var soci2 = new Task('Go to Jake\'s wedding', '2016-10-01', 'how much should it cost me?');
-    cateLib[2].addTask(soci1);
-    cateLib[2].addTask(soci2);
-    var dail1 = new Task('Buy new shampoo', '2016-06-02', 'that CLEAR one.');
-    var dail2 = new Task('Have a haircut', '2016-06-01', 'to celebrate Children\'s day.');
-    cateLib[3].addTask(dail1);
-    cateLib[3].addTask(dail2);
+    var r = cateLib.filter(function(item){
+        return item.name === cateName;
+    })[0];
+    return r !== undefined
+        ? r
+        : null;
 }
 
 /////////////////////////////
@@ -323,16 +348,12 @@ function forgeData() {
 /*
 @return {array.<object>} 返回高亮的task数组
 */
-function getFuckingTasksArray(){
+function getTargetTasksArray(){
     var cateName = $('#category .active').getElementsByClassName('name')[0].innerHTML;
-    var c = getCategoryByCateName(cateName);
-    var r;
-    if (c === null) {
-        r = allFuckingTasks;
-    } else {
-        r = c.tasks; 
-    }
-    return r;
+    var cateFound = getCategoryByCateName(cateName);
+    return cateFound === null
+        ? globalTasks
+        : cateFound.tasks;
 }
 /*
 @return {object} 返回高亮的tasklist子元素所对应的task对象，无高亮返回null
@@ -343,7 +364,7 @@ function getActiveTask(){
         return null;
     }
     var taskName = t.innerHTML;
-    return allFuckingTasks.filter(function(item){
+    return globalTasks.filter(function(item){
         return item.title === taskName;
     })[0];
 }
@@ -352,15 +373,14 @@ function getActiveTask(){
 高亮cateLib第一项所在的元素
 */
 function renderCategoryList() {
-    var undoneCount = 0;    
     var tarInnerHtml = '';
+    var undoneCount = 0;    
     for (var i in cateLib) {
         var currCate = cateLib[i];
-        var currName = currCate.name;
         var currUndoneCount = currCate.getTasksByStatus('undone').length;
         tarInnerHtml += '<li class="cate">'
             + '<span class="name cate">' 
-            + currName
+            + currCate.name
             + '</span>'
             + '<span class="undone cate">' 
             + currUndoneCount
@@ -380,16 +400,16 @@ function renderCategoryList() {
 @param {string=} status undefined或'done'或'undone'
 */
 function renderTasksList(status) {
-    var taskArrInGivenStatus = getFuckingTasksArray().filter(function(i){
+	var taskArrInGivenStatus = getTargetTasksArray().filter(function(item){
         switch (status) {
             case undefined:
                 return true;
                 break;
             case 'undone':
-                return i.done === false;
+                return item.done === false;
                 break;
             case 'done':
-                return i.done === true;
+                return item.done === true;
                 break;
         }
     });
@@ -408,7 +428,7 @@ function renderTasksList(status) {
                 + '<h1 class="date">'
                 + currDate
                 + '</h1>';
-            // 根据左侧高亮元素确定要获取的task中，date属性为该日期的项的［名称］构成的数组
+            // 获取的目标task中date属性为该日期的项的［名称］构成的数组
             var tasksOnThisDate = taskArrInGivenStatus.filter(function(item){
                 return (item.date === currDate);
             });
@@ -430,20 +450,24 @@ function renderTasksList(status) {
     }
 }
 /* 
-将高亮的li.task的title、date、main属性写入右侧框
+将高亮的li.task的title、date、main和done属性写入右侧框
 */
 function renderTask() {
     var taskName = $('.tasklist .active').innerHTML;    
-    var tarTask = allFuckingTasks.filter(function(item){
+    var tarTask = globalTasks.filter(function(item){
         return item.title === taskName;
     })[0];
-    console.log(tarTask)
     if (tarTask === undefined) {
         replaceContentHtml(contentHtmlUtil.contentOriginal, false);
     } else {
         $('#content .title').innerHTML = tarTask.title;
         $('#content .date').innerHTML = tarTask.date;
         $('#content .main').innerHTML = tarTask.main;
+        if (tarTask.done) {
+            addClass($('#content .title'), 'done');
+        } else {
+            removeClass($('#content .title'), 'done');
+        }
     }    
 }
 /*
@@ -481,9 +505,8 @@ function activateTargetLi(targetLi) {
 function activateTargetCateName(cateName) {
     var list = $('.catelist').getElementsByClassName('name');
     for (var i in list) {
-        var curLi = list[i];
-        if (curLi.innerHTML === cateName) {
-            activateTargetLi(curLi.parentElement);
+        if (list[i].innerHTML === cateName) {
+            activateTargetLi(list[i].parentElement);
             return true;
         }
     }
@@ -497,21 +520,12 @@ function activateTargetCateName(cateName) {
 function activateTargetTaskName(taskName) {
     var list = $('.tasklist').getElementsByClassName('task');
     for (var i in list) {
-        var curLi = list[i];
-        if (curLi.innerHTML === taskName) {
-            activateTargetLi(curLi);
+        if (list[i].innerHTML === taskName) {
+            activateTargetLi(list[i]);
             return true;
         }
     }
     return false;
-}
-/*
-刷新三个div
-*/
-function refreshAll() {
-    renderCategoryList();
-    renderTasksList();
-    renderTask();
 }
 
 /////////////////////////////
@@ -590,16 +604,24 @@ $.delegateByClassName('.catelist', 'remove', 'mouseout', function(e){
     et.style.display = 'none';
 });
 /*
-click .remove按钮上时confirm是否删除此cate，确认后从catelib中移除该项并刷新列表
+click .remove按钮上时confirm是否删除此cate，确认后删除该cate下的task，从catelib中移除该cate，刷新列表
 */
 $.delegateByClassName('.catelist', 'remove', 'click', function(e){
     var et = e.target;
     var tarCateName = et.parentElement.getElementsByClassName('name')[0].innerHTML;
-    var c = confirm('确定删除分类「' + tarCateName + '」吗？此操作不可撤销。');
+    var c = confirm('将同时删除分类「' + tarCateName + '」下的所有任务。继续吗？。');
     if (c === true) {
-        cateLib.splice(cateLib.indexOf(getCategoryByCateName(tarCateName)), 1);
+        var tarCate = getCategoryByCateName(tarCateName);
+        var tasksToDelete = tarCate.getTasksByStatus();
+        for (var i in tasksToDelete) {
+            globalTasks.splice(globalTasks.indexOf(tasksToDelete[i]), 1);
+        }
+        cateLib.splice(cateLib.indexOf(tarCate), 1);
+		renderCategoryList();
+		renderTasksList();
+		renderTask();
+		saveToCache();
     }
-    refreshAll();
 });
 /*
 click #category .add按钮时prompt新分类名（8个字以内），尝试写入catelib
@@ -607,22 +629,29 @@ click #category .add按钮时prompt新分类名（8个字以内），尝试写�
 */
 $.click('#category .add', function(e){
     var newCateName = prompt('请输入新分类的名字(8个字以内）。')
-    if (newCateName !== null) {
-        while (newCateName === '' 
-                || newCateName.length > 8
-              ) {
-        newCateName = prompt('分类名称长度应在1至8个字之间。');
-        }
-        if (addCategory(new Category(newCateName)) === true) {
-            showInfo('good', '添加分类成功。')
-            renderCategoryList();
-            activateTargetLi($('.catelist').lastChild);
-            renderTasksList();
-            renderTask();
-        } else {
-            showInfo('bad', '已存在相同名称的分类。')
-        }
-    }    
+    if (newCateName === null) {
+		return;	
+	}
+	while (newCateName === '' 
+			|| newCateName.length > 8
+		  ) {
+	newCateName = prompt('分类名称长度应在1至8个字之间。');
+	}
+	if (newCateName === '所有任务') {
+		showInfo('bad', '不能给分类起这个名字。_(:зゝ∠)_')
+		return;
+	}
+	if (addCategory(new Category(newCateName)) === true) {
+		showInfo('good', '添加分类成功。')
+		renderCategoryList();
+		activateTargetLi($('.catelist').lastChild);
+		renderTasksList();
+		renderTask();
+		saveToCache();
+	} else {
+		showInfo('bad', '已存在相同名称的分类。');
+		return;
+	}    
 });
 
 ///// 中 /////
@@ -660,6 +689,13 @@ click .add按钮后
 将右侧#content内部替换为输入框
 */
 $.click('#tasks .add', function(e){
+    // 左侧.all高亮时不允许新建任务
+    if (hasClass($('#category .all-cate'), 'active')) {
+        showInfo('bad', '请选择一个分类。');
+        return;
+    }
+    // 改写‘正在编辑’状态为false
+    contentHtmlUtil.isEditing = false;
     contentHtmlUtil.save();
     replaceContentHtml(contentHtmlUtil.contentWhenAddingNew, true);
 });
@@ -669,7 +705,7 @@ $.click('#tasks .add', function(e){
 $.delegateByClassName('#content', 'mark', 'click', function(e){
     var currTask = getActiveTask();
     if (currTask === undefined) {
-        showInfo('bad', '还没添加任务呢。')
+        showInfo('bad', '还没添加任务呢。');
         return;
     }
     // 若已完成则返回，不confirm
@@ -681,8 +717,9 @@ $.delegateByClassName('#content', 'mark', 'click', function(e){
     var currCateName = $('#category .active').getElementsByClassName('name')[0].innerHTML;   
     var c = confirm('将「' + currTaskName + '」标记为「已完成」吗？');
     if (c === true) {        
-        currTask.markAsDone();
+        currTask.done = true;
         showInfo('good', '标记成功。')
+		saveToCache();
         renderCategoryList();
         activateTargetCateName(currCateName);
         renderTasksList();
@@ -696,6 +733,8 @@ click .edit按钮
 将右侧#content内部替换为当前内容
 */
 $.delegateByClassName('#content', 'edit', 'click', function(e){
+    // 改写‘正在编辑’状态为true
+    contentHtmlUtil.isEditing = true;
     contentHtmlUtil.save();
     replaceContentHtml(contentHtmlUtil.archiveToEdit, true);
 });
@@ -703,25 +742,42 @@ $.delegateByClassName('#content', 'edit', 'click', function(e){
 click 新建或编辑任务时的.save按钮
 */
 $.delegateByClassName('#content', 'save', 'click', function(){
-    // 输入非法时显示错误消息
-    if (checkTaskInput()) {
-        // 保存高亮的左侧li对应的cate的引用和其name属性
-        var tarCate = getActiveCate();
-        var cateName = tarCate.name;
-        // 保存新task的名称
-        var taskName = $('.title.editable').value;
-        // 按三个输入框的值，在本cate下添加新task
-        tarCate.addTask(new Task(taskName,
-                                 $('.date.editable').value,
-                                 $('.main.editable').value));
-        showInfo('good', '成功添加任务。');
-        replaceContentHtml(contentHtmlUtil.archiveToDisplay, false);
-        renderCategoryList();
-        activateTargetCateName(cateName);
-        renderTasksList();
-        activateTargetTaskName(taskName);
-        renderTask();
-    }
+    var taskName = trim2($('.title.editable').value);
+    var taskDate = $('.date.editable').value;
+    var taskMain = trim2($('.main.editable').value);
+    switch (contentHtmlUtil.isEditing) {
+        // 处于‘编辑’状态
+        case true:
+            if (validateInput(false)) {
+                // 保存要修改的task的引用
+                var tarTask = contentHtmlUtil.taskUnderEditing;
+                tarTask.title = taskName;
+                tarTask.date = taskDate;
+                tarTask.main = taskMain;
+                showInfo('good', '任务修改成功。');
+                replaceContentHtml(contentHtmlUtil.contentOriginal, false);
+                renderTasksList();
+                // 获取更新了title的task，高亮之
+                activateTargetTaskName(tarTask.title);
+				saveToCache();
+            }
+            break;
+        // 处于‘新建’状态，额外检查新title是否已存在于所有task中
+        case false:
+            if (validateInput(true)) {
+                var tarCateName = $('#category .active').getElementsByClassName('name')[0].innerHTML;
+                getCategoryByCateName(tarCateName).addTask(new Task(taskName, taskDate, taskMain));
+                showInfo('good', '成功添加任务。');
+                replaceContentHtml(contentHtmlUtil.contentOriginal, false);
+                renderCategoryList();
+                activateTargetCateName(tarCateName);
+                renderTasksList();
+                activateTargetTaskName(taskName);
+				saveToCache();
+            }
+            break;
+    }   
+    renderTask();
 });
 /*
 /*
@@ -742,8 +798,8 @@ $.delegateByClassName('#content', 'editable', 'keyup', function(e){
     var v = et.value;
     switch (true) {
         case hasClass(et, 'title'):
-            if (v.length === 18) {
-                showInfo('bad', '任务标题不能超过18个字。')
+            if (v.length === 22) {
+                showInfo('bad', '任务标题不能超过22个字。')
             }
             break;
         case hasClass(et, 'date'):
@@ -766,10 +822,14 @@ $.delegateByClassName('#content', 'editable', 'keyup', function(e){
 
 window.onload = function(){
     resizeToWindowSize();
-    initCategory();
-    forgeData();
-    refreshAll();
+	loadFromCache();
+    renderCategoryList();
+    renderTasksList();
+    renderTask();    
 };
 window.onresize = function(){
     resizeToWindowSize();
 };
+$.click('#title', function(){
+	localStorage.clear();
+});

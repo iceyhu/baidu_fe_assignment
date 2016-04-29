@@ -96,10 +96,6 @@ li.cate {
     background: url(../img/icon-folder.png) no-repeat 20px 50%;
     padding-left: 53px;
 }
-li.cate:hover,
-li.cate *:hover {
-    cursor: pointer;
-}
 li.cate.active {
     background-color: #fff;
 }
@@ -174,7 +170,7 @@ li.cate .remove {
     color: #fff;
 }
 .tasklist .day .task.done {
-    color: green;
+    color: #42bd41;
     text-decoration: line-through;
 } 
 /* @content */
@@ -191,10 +187,16 @@ li.cate .remove {
     border-bottom: 1px solid #cecece;
 }
 #content .title {
-    font-size: 18px;
+    font-size: 16px;
+    font-weight: 700;
+}
+#content .title.done {
+    text-decoration: line-through;
+    color: #42bd41;
 }
 #content .date {
     background-color: #fafaee;
+    font-style: italic;
 }
 #content .main {
     background-color: #ffffff;
@@ -205,9 +207,6 @@ li.cate .remove {
 #content .main.editable {
     color: #c3c3c3;
     resize: none;
-}
-#content .title.editable {
-    background-color: #ededed;
 }
 #content .mark, 
 #content .save {
@@ -223,7 +222,7 @@ li.cate .remove {
     right: 20px;
     cursor: pointer;
 }
-/* @@@ */
+/* @other */
 .info-area {
     position: absolute;
     top: 9px;
@@ -236,10 +235,10 @@ li.cate .remove {
     z-index: 3;
 }
 .bad {
-    background-color: palevioletred;
+    background-color: #f36c60;
 }
 .good {
-    background-color: skyblue;
+    background-color: #42bd41;
 }
 #cover {
     display: none;
