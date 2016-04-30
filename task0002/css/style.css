@@ -74,7 +74,7 @@ h4 {
 #main-1 #form-h .result {
     width: 100%;
     text-align: center;
-    background-color: antiquewhite;
+    background-color: #fafaee;
     margin: 10px 0;
     padding: 5px;
 }
@@ -107,14 +107,14 @@ h4 {
     margin: 5px 0;
     width: 500px;
     margin: 0 auto;
-    background-color: antiquewhite;
+    background-color: #fafaee;
     line-height: 80px;
     text-align: center;
     font-weight: 700;
 }
 #main-2 #form-c .counter {
     margin: 10px 0;
-    background-color: antiquewhite;
+    background-color: #fafaee;
     width: 100%;
     line-height: 80px;
     text-align: center;
