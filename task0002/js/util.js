@@ -212,7 +212,6 @@ $.delegate = function(selectors, tag, event, listener) {
         && typeof event === 'string'
         && typeof listener === 'function'
         ) {
-
         // check if SELECTORS are valid
         var s = selectors.split(/\s+/);
         var l = s.length;
@@ -220,25 +219,23 @@ $.delegate = function(selectors, tag, event, listener) {
         if (l > 2) {
             return false;
         } else {
-            var queryResult1 = query(s[0]);
-            if (!queryResult1) {
+            var r1 = query(s[0]);
+            if (!r1) {
                 return false;
             } else if (l === 1) {
-                element = queryResult1;
+                element = r1;
             } else if (l === 2) {
-                var queryResult2 = query(s[1], queryResult1);
-                if (!queryResult2) {
+                var r2 = query(s[1], r1);
+                if (!r2) {
                     return false;
                 } else {
-                    element = queryResult2;
+                    element = r2;
                 }
             }
         }
         if (!element) {
             return false;
         }
-        
-        // delegate
         // element的标签为tag的子元素节点的event冒泡到element时，在事件目标（即该节点）上调用listener
         element.addEventListener(event, function(){
             var e = arguments[0] || window.event;
@@ -250,6 +247,49 @@ $.delegate = function(selectors, tag, event, listener) {
             }
         }, false);
         return true;        
+    }
+    return false;
+}
+$.delegateByClassName = function(selectors, className, event, listener) {
+    if (typeof selectors === 'string'
+        && typeof className === 'string'
+        && typeof event === 'string'
+        && typeof listener === 'function'
+       ) {
+        var s = selectors.split(/\s+/);
+        var l = s.length;
+        var element = null;
+        if (l > 2) {
+            return false;
+        } else {
+            var r1 = query(s[0]);
+            if (!r1) {
+                return false;
+            } else if (l === 1) {
+                element = r1;
+            } else if (l === 2) {
+                var r2 = query(s[1], r1);
+                if (!r2) {
+                    return false;
+                } else {
+                    element = r2;
+                }
+            }
+        }
+        if (!element) {
+            return false;
+        }        
+        // delegate
+        element.addEventListener(event, function(){
+            var e = arguments[0] || window.event;
+            var t = e.target || e.srcElement;
+            if (t !== null
+                && hasClass(t, className)
+               ) {
+                listener.call(t, e);
+            }
+        }, false);
+        return true;
     }
     return false;
 }
@@ -366,46 +406,57 @@ function each(arr, fn) {
     }
     return false;
 }
+function hasClass(element, className) {
+    if (element instanceof Node
+        && element.nodeType === 1 
+        && typeof className === 'string'
+       ) {
+        var curClass = element.getAttribute('class');
+        if (curClass !== null) {
+            if (curClass.split(' ').indexOf(className) !== -1) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+}
 function addClass(element, newClassName) {
     if (element instanceof Node
         && element.nodeType === 1 
         && typeof newClassName === 'string'
-        && newClassName !== ' '
        ) {
         var curClass = element.getAttribute('class');
         if (curClass === null) {
             element.setAttribute('class', newClassName);
-            return true;
         } else {
-            // 如果已存在给定的类名则返回
-            if (curClass.split(' ').indexOf(newClassName) !== -1) {
-                return true;
-            } else {
+            if (curClass.split(' ').indexOf(newClassName) === -1) {
                 element.setAttribute('class', curClass + ' ' + newClassName);
-                return true;
             }
         }
+        return true;
     } else {
         return false;
     }
 }
-function removeClass(element, oldClassName) {
+function removeClass(element, tarClass) {
     if (element.nodeType === 1 
-        && typeof oldClassName === "string" 
-        && oldClassName !== " "
+        && typeof tarClass === "string" 
        ) {
         var curClass = element.getAttribute("class");
+        // return if it has no CLASS
         if (curClass === null) {
             return true;
         } else {
-            var oldClassStrPos = curClass.split(' ').indexOf(oldClassName);
-            if (oldClassStrPos === -1) {
+            var classArr = curClass.split(' ');
+            var tarPos = classArr.indexOf(tarClass);
+            // return if tar class wasn't found
+            if (tarPos === -1) {
                 return true;
             } else {
-                var newClass = curClass.split(' ');
-                newClass.splice(oldClassStrPos, 1);
-                element.setAttribute('class', newClass);
-                return newClass;
+                classArr.splice(tarPos, 1);
+                element.setAttribute('class', classArr.join(' '));
+                return true;
             }
         }        
     } else {
@@ -474,6 +525,7 @@ function getObjectLength(obj) {
     }
     return false;
 }
+// 先想出来的，好low
 function trim(str) {
     if (typeof str === "string" 
         && str !== ""
@@ -489,67 +541,59 @@ function trim(str) {
     }
     return false;
 }
+// 好一些的
+function trim2(str) {
+    return str.replace(/(^\s+)|(\s+$)/, '');
+}
 function simpleTrim(str) {
     if (typeof str === "string") {
-        var i,
-            lt,
-            rt;
-            result = "";
+        var i;
+        var result = "";
         for (i = 0; i < str.length; i++) {
             if ((str[i] !== " ")) {
-                lt = i;
+                var lt = i;
                 break;
             }
         }
         for (i = str.length - 1; i > -1; i--) {
             if ((str[i] !== " ")) {
-                rt = i;
+                var rt = i;
                 break;
             }
         }        
-        return str.slice(lt, rt+1);
+        return str.slice(lt, rt + 1);
     }
     return false;
 }
-// 返回了去重的新数组，优点是简单，缺点是原数组未被清理
+// 构建并返回去重的新数组。。有点low，旧数组也没有被清理
 function uniqArrayHASH(arr) {
     if (Array.isArray(arr)) {
-        var result = [];
+        var r = [];
         for (var i = 0, l = arr.length; i < l; i++) {
-            if (result.indexOf(arr[i]) === -1) {
-                result.push(arr[i]);
+            if (r.indexOf(arr[i]) === -1) {
+                r.push(arr[i]);
             }
         }
-        return result;
+        return r;
     }
     return false;
 }
-// 若给定数组的第一项与之后任一项相同，则移除第一项，返回true；
-// 未重复或数组长度为1，返回false；
-function removeFisrtItemIfDuplicate(arr) {
-    var t = arr[0];
-    for (var i = 1, l = arr.length; i < l; i++) {
-        if (arr[i] === t) {
-            arr.shift();
-            break;
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
+// 效率会高一点？但还是没清理旧数组
 function uniqArray(arr) {
     if (Array.isArray(arr)) {
-        if (removeFisrtItemIfDuplicate(arr)) {
-            console.log('ff')
+        var o = {};
+        var r = [];        
+        for (var i = 0, l = arr.length; i < l; i++) {
+            if (o[arr[i]] === undefined) {
+                r.push(arr[i]);
+                o[arr[i]] = true;
+            }    
         }
+        return r;
     } else {
         return false;
     }
 }
-var a = [1, 'f', 'c', 3, 'f', 1];
-console.log(removeFisrtItemIfDuplicate(a))
-
 function cloneObject(src) {
     var result = null;
     switch (typeof src) {
@@ -578,5 +622,50 @@ function cloneObject(src) {
         }
     return result;
 };
-
-
+// 继承构造函数 - 1：将代理函数的原型设为父函数原型，将子函数的原型设为此空对象的实例、构造器设为自身。
+function extendViaAgent(ChildConstructor, ParentConstructor) {
+    var AgentConstructor = function() {};
+    AgentConstructor.prototype = ParentConstructor.prototype;
+    ChildConstructor.prototype = new AgentConstructor();
+    ChildConstructor.prototype.constructor = ChildConstructor;
+}
+// 继承构造函数 - 2：将父函数原型的所有属性写入子函数原型。
+function extendByCopyingProperty(ChildConstructor, ParentConstructor) {
+    for (var property in ParentConstructor) {
+        ChildConstructor[property] = ParentConstructor[property];
+    }
+}
+// 在目标节点前插入新节点
+function insertAfter(newNode, tarNode) {
+    var par = tarNode.parentNode;
+    if (par.lastChild === tarNode) {
+        par.appendChild(newNode);
+    } else {
+        par.insertBefore(newNode, tarNode.nextSibling);
+    }
+}
+// 判断字符串是否符合yyyy-mm-dd的格式，不判断闰年
+function isValidDate(str) {
+    if (typeof str === 'string') {
+        if (/^([012]\d\d\d)-(([01]\d)-([0123]\d))$/.test(str)) {
+            var y = parseInt(RegExp.$1);
+            var m = parseInt(RegExp.$3);
+            var d = parseInt(RegExp.$4);
+            var md = (RegExp.$2);0
+            if (y !== 0 
+                && m !== 0
+                && d !== 0
+                ) {
+                if (y < 2100
+                    && m < 13
+                    && d < 32
+                   ) {
+                    if (['02-30', '02-31', '04-31', '06-31', '09-31', '11-31'].indexOf(md) === -1 ) {
+                        return true;
+                    }
+                }                    
+            }       
+        }
+    }
+    return false;
+}

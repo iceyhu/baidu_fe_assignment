@@ -1,50 +1,40 @@
-var input = $('#form-h .hobby');
-var container = $('#form-h .container');
-
-function showAlert() {
-    var t = $('#form-h .error');
-    t.style.display = 'block';
-    setTimeout(function(){
-        t.style.display = 'none';
-    }, 1000);
-}
-function dismissAlert() {
-    var t = $('#form-h .error');
-    t.style.display = 'none';
-}
+var input = $('.form-h .input');
+var container = $('.form-h .container');
+/*
+@param {string} str
+@return {array.<string>} 用空格类字符或中文逗号或英文逗号或顿号将参数字符串分隔，去掉空字符串项，返回去重的数组
+*/
 function filterInput(str) {
-    if (str !== '') {
-        var r = str.split(/[,\s\uFF0C\u3001\uFF1B]+/);
-        // 去除内容为空字符串的项
-        for (var i = 0, l = r.length; i < l; i++) {
-            if (r[i] === '') {
-                r.splice(i, 1);
-            }
-        }
-        return uniqArray(r);
-    } else {
-        return false;
-    }
+    var r = str.split(/[,\s\uFF0C\u3001\uFF1B]+/);
+    r.filter(function(item){
+        return item !== '';
+    });
+    return uniqArrayHASH(r);
 };
+/*
+@param {array.<string>} arr 
+生成内容分别为参数中每一项的checkbox，写入容器
+*/
 function renderResultArray(arr) {
-    var r = '<br>';
-    for (var i = 0, l = arr.length; i < l; i++) {
+    var r = '';
+    for (var i in arr) {
         r += '<input type="checkbox">' + arr[i] + ' </input>';
-    }
+    };
     container.innerHTML = r;
 }
-$.click('#form-h .submit', function(){
+$.click('.form-h .submit', function(){
     var r = filterInput(input.value);
     if (r !== false) {
-        dismissAlert();
+        $('.form-h .error').style.display = 'none';
         renderResultArray(r);
     } else {
-        showAlert();
+        $('.form-h .error').style.display = 'block';
+        setTimeout(function(){
+            $('.form-h .error').style.display = 'none';
+        }, 3000);
     }  
-    
-    console.log(r)
 });
-$.click('#form-h .reset', function() {
+$.click('.form-h .reset', function() {
     input.value = '';
     container.innerHTML = '';
 });
