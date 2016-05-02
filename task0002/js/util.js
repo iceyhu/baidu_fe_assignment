@@ -1,93 +1,154 @@
 function query(selector, root) {
-    if (typeof selector === 'string') {
-
-        var root = root instanceof Node
-            ? root
-            : document.documentElement;        
-        var walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null, false);
-        var node = walker.nextNode();        
-        var result = null;       
-        
-        var idMatch = selector.match(/(^#)([\w-]+$)/);
-        if (idMatch) {
-            var id = idMatch[2];
+    var root = root instanceof Node
+        ? root
+        : document.documentElement;        
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT, null, false);
+    var node = walker.nextNode(); 
+    switch (true) {
+        case (/^#([\w-]+$)/).test(selector):
+            var tarId = RegExp.$1;
             while (node) {
-                if (node.getAttribute('id') === id) {
-                    result = node;
-                    break;
+                if (node.id === tarId) {
+                    return node;
                 }
                 node = walker.nextNode();
-            }            
-            if (result) {
-                return result;
             }
-        }
-        var classMatch = selector.match(/(^\.)([\w\.-]*[^\.]$)/);
-        if (classMatch) {
-            var classes = classMatch[2].split('.');
-            var targetClasses = [];
+            break;
+        case (/^\.([\w-]*[\w-\.]+$)/).test(selector):
+            var tarClasses = RegExp.$1.split('.');
             while (node) {
-                var isInTarget = true;
+                var matches = true;
                 if (node.hasAttribute('class')) {
-                    targetClasses = node.getAttribute('class').split(' ');
-                    for (var i = 0, l = classes.length; i<l; i++) {
-                        if (targetClasses.indexOf(classes[i]) === -1) {
-                            isInTarget = false;
+                    for (var i in tarClasses) {
+                        if (!hasClass(node, tarClasses[i])) {
+                            matches = false;
                             break;
                         }
                     }
-                    if (isInTarget) {
-                        result = node;
+                    if (matches) {
+                        return node;    
                         break;
                     }
                 }
                 node = walker.nextNode();
             }
-            if (result) {
-                return result;
-            }
-        }
-        var tagMatch = selector.match(/^[\w-]+$/);
-        if (tagMatch) {
-            result = root.getElementsByTagName(tagMatch);
-            if (result[0]) {
-                return result[0];
-            }
-        }
-        var attrExistsMatch = selector.match(/(^\[)([\w-]+)(\]$)/);
-        if (attrExistsMatch) {
-            var attr = attrExistsMatch[2];
+            break;
+        case (/^(\w+)$/).test(selector):
+            var tarTag = RegExp.$1;
             while (node) {
-                if (node.hasAttribute(attr)) {
-                    result = node;
-                    break;
+                if (node.nodeName === tarTag.toUpperCase()) {
+                    return node;
+                }
+                node = walker.nextNode();
+            }            
+            break;            
+        case (/^\[(\w+)\]$/).test(selector):
+            var tarAttr = RegExp.$1;
+           while (node) {
+//                if (node.tarAttr ) {
+//                    return node;
+//                }
+                node = walker.nextNode();
+            }
+            break;
+        case (/^\[(.+)\]=\[(.+)\]$/).test(selector):
+            var tarAttr = RegExp.$1;
+            var tarValue = RegExp.$2;
+            console.log(tarValue)
+         while (node) {
+                if (node.tarAttr === tarValue) {
+                    return node;
                 }
                 node = walker.nextNode();
             }
-            if (result) {
-                return result;
-            }
-        }
-        var attrMatch = selector.match(/(^\[)([\w-]+)=([\w-]+)(\]$)/);
-        if (attrMatch) {
-            var attrName = attrMatch[2];
-            var attrValue = attrMatch[3];
-            while (node) {
-                if (node.getAttribute(attrName) === attrValue) {
-                    result = node;
-                    break;
-                }
-                node = walker.nextNode();
-            }
-            if (result) {
-                return result;
-            }           
-        }              
-        return null;
-    } else {
-        return false;
+            break;
     }
+    return null;
 }
+
+console.log(query('ul'))
+                
+                
+//        var idMatch = selector.match(/(^#)([\w-]+$)/);
+//        if (idMatch) {
+//            var id = idMatch[2];
+//            while (node) {
+//                if (node.getAttribute('id') === id) {
+//                    result = node;
+//                    break;
+//                }
+//                node = walker.nextNode();
+//            }            
+//            if (result) {
+//                return result;
+//            }
+//        }
+//        var classMatch = selector.match(/(^\.)([\w\.-]*[^\.]$)/);
+//        if (classMatch) {
+//            var classes = classMatch[2].split('.');
+//            var targetClasses = [];
+//            while (node) {
+//                var isInTarget = true;
+//                if (node.hasAttribute('class')) {
+//                    targetClasses = node.getAttribute('class').split(' ');
+//                    for (var i = 0, l = classes.length; i<l; i++) {
+//                        if (targetClasses.indexOf(classes[i]) === -1) {
+//                            isInTarget = false;
+//                            break;
+//                        }
+//                    }
+//                    if (isInTarget) {
+//                        result = node;
+//                        break;
+//                    }
+//                }
+//                node = walker.nextNode();
+//            }
+//            if (result) {
+//                return result;
+//            }
+//        }
+//        var tagMatch = selector.match(/^[\w-]+$/);
+//        if (tagMatch) {
+//            result = root.getElementsByTagName(tagMatch);
+//            if (result[0]) {
+//                return result[0];
+//            }
+//        }
+//        var attrExistsMatch = selector.match(/(^\[)([\w-]+)(\]$)/);
+//        if (attrExistsMatch) {
+//            var attr = attrExistsMatch[2];
+//            while (node) {
+//                if (node.hasAttribute(attr)) {
+//                    result = node;
+//                    break;
+//                }
+//                node = walker.nextNode();
+//            }
+//            if (result) {
+//                return result;
+//            }
+//        }
+//        var attrMatch = selector.match(/(^\[)([\w-]+)=([\w-]+)(\]$)/);
+//        if (attrMatch) {
+//            var attrName = attrMatch[2];
+//            var attrValue = attrMatch[3];
+//            while (node) {
+//                if (node.getAttribute(attrName) === attrValue) {
+//                    result = node;
+//                    break;
+//                }
+//                node = walker.nextNode();
+//            }
+//            if (result) {
+//                return result;
+//            }           
+//        }              
+//        return null;
+//    } else {
+//        return false;
+//    }
+//}
 function $(selectors) {
     if (typeof selectors === 'string') {
         var s = selectors.split(/\s+/);

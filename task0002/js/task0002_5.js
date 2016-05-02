@@ -2,113 +2,104 @@ var dragged;
 var draggedParent;
 var cloned;
 
-function highlightItem(li) {
-    li.style.backgroundColor = 'lightgreen';
-    li.style.borderColor = 'lightgreen';
+function focusLi(li) {
+    li.style.backgroundColor = '#0666c6';
+    li.style.borderColor = '#0666c6';
 }
-function resetItem(li) {
+function resetLi(li) {
     li.style.backgroundColor = '';
     li.style.borderColor = '';
 }
-function highlightContainer(ul) {
-    ul.style.borderColor = 'lightgreen';
+function focusContainer(ul) {
+    ul.style.borderColor = '#0666c6';
 }
 function resetContainer(ul) {
     ul.style.borderColor = '';
 }
-function cloneItem(li) {
+function cloneLi(li) {
     var r = li.cloneNode();
     r.innerHTML = li.innerHTML;
-    highlightItem(r);
+    focusLi(r);
     return r;
 }
-// ---
+// start时复制目标li，保存目标父对象和复制对象的引用
 $.delegate('#main-5', 'li', 'dragstart', function(e){
     dragged = e.target;
     draggedParent = dragged.parentElement;
-    cloned = cloneItem(dragged);
+    cloned = cloneLi(dragged);
 });
-// dragover其它容器时改变容器样式、目标暂时消失，dragover自身容器时目标正常显示；
-// 离开其它容器时恢复容器样式、目标正常显示，离开本身容器时目标暂时消失
+// over其它容器时改变容器样式、目标暂时消失，over自身容器时目标正常显示
+// leave其它容器时恢复容器样式、目标正常显示，leave自身容器时目标暂时消失
 $.delegate('#main-5', 'ul', 'dragover', function(e){
     e.preventDefault();
-    var t = e.target;
-    if (t !== draggedParent) {
+    var et = e.target;
+    if (et !== draggedParent) {
         dragged.style.display = 'none';
-        highlightContainer(t);
+        focusContainer(et);
     } else {
         dragged.style.display = 'block';
     }
 });
 $.delegate('#main-5', 'ul', 'dragleave', function(e){
-    var t = e.target;
-    if (t !== draggedParent) {
+    var et = e.target;
+    if (et !== draggedParent) {
         dragged.style.display = 'block';
-        resetContainer(t);
+        resetContainer(et);
    } else {
         dragged.style.display = 'none';
     }
 });
 $.delegate('#main-5', 'li', 'dragover', function(e){
     e.preventDefault();
-    var tp = e.target.parentElement;
-    if (tp !== draggedParent) {
-        highlightContainer(e.target.parentElement);
+    var etp = e.target.parentElement;
+    if (etp !== draggedParent) {
+        focusContainer(etp);
         dragged.style.display = 'none';
     } else {
         dragged.style.display = 'block';
     }
 });
 $.delegate('#main-5', 'li', 'dragleave', function(e){
-    var tp = e.target.parentElement;
-    if (tp !== draggedParent) {
-        resetContainer(tp);
+    var etp = e.target.parentElement;
+    if (etp !== draggedParent) {
+        resetContainer(etp);
         dragged.style.display = 'block';
     } else {
         dragged.style.display = 'none';
     }
 });
-// enter自身
-$.delegate('#main-5', 'li', 'dragenter', function(e){
-    e.preventDefault();
-    var t = e.target;
-    if (t.parentElement !== draggedParent) {
-        highlightContainer(e.target.parentElement);
-        dragged.style.display = 'none';    
-    } else {
-        dragged.style.display = 'block';
-    }
-});
-// 根据drop位置放置新li，短时间内新li和容器边框高亮
+// 如drop目标非自身所在容器，高亮新li和容器片刻
 $.delegate('#main-5', 'ul', 'drop', function(e){
-    var t = e.target;
-    if (t !== draggedParent) {
-        var r = t.appendChild(cloned);
+    var et = e.target;
+    if (et !== draggedParent) {
+        var r = et.appendChild(cloned);
         setTimeout(function(){
-            resetItem(r);
-            resetContainer(t);
-        }, 500);
+            resetLi(r);
+            resetContainer(et);
+        }, 1000);
     } else {
         dragged.style.display = 'block';
     }    
 });
+// 如drop目标非自身所在容器，根据drop位置放置新li
 $.delegate('#main-5', 'li', 'drop', function(e){
-    var t = e.target;
-    if (t.parentElement !== draggedParent) {
-        var r;
+    var et = e.target;
+    var etp = e.target.parentElement;
+    if (etp !== draggedParent) {
         var posY = e.offsetY;
+        var r;
         if (posY < 16) {
-            r = t.parentElement.insertBefore(cloned, t);
+            r = etp.insertBefore(cloned, et);
         } else {
-            r = t.parentElement.insertBefore(cloned, t.nextElementSibling);
+            r = etp.insertBefore(cloned, et.nextElementSibling);
         }
         setTimeout(function(){
-            resetItem(r);
-            resetContainer(t.parentElement);
-        }, 500);
+            resetLi(r);
+            resetContainer(etp);
+        }, 1000);
     }
 });
-// 非容器区域放置无效
+// end在非容器区域时无效
 $.on('#main-5', 'dragend', function(e){
     e.target.style.display = 'block';
 });

@@ -85,63 +85,73 @@
     padding: 5px;
 }
 /* @task2 */
-.form-c .time {
-    width: 100%;
-    margin: 10px 0;
+.form-c {
+    width: 500px;
+    margin: 10px auto;
 }
 .form-c .info {
-    margin: 5px 0;
-    width: 500px;
-    margin: 0 auto;
-    background-color: #fafaee;
+    margin: 5px auto;
+    background-color: #ffe082;
     line-height: 80px;
     text-align: center;
-    font-weight: 700;
+}
+.form-c .input {
+    width: 496px;
+}
+.form-c .btn {
+    margin: 5px auto;
 }
 .form-c .counter {
-    margin: 10px 0;
-    background-color: #fafaee;
-    width: 100%;
+    margin: 5px auto;
+    background-color: #2baf2b;
     line-height: 80px;
+    font-weight: 700;
     text-align: center;
 }
 /* @task3 */
-#main-3 #carousal {
+.carousal {
     position: relative;
     width: 500px;
     height: 313px;
     margin: 5px auto;
     overflow: hidden;
 }
-#main-3 #carousal .container {
+.carousal .container {
     position: relative;
     width: 10000px;
     left: -500px;
 }
-#main-3 .item {
+.carousal .item {
     float: left;
     width: 500px;
     height: 313px;
 }
-#main-3 .carousal-nav {
+#main-3 .nav {
     position: absolute;
     width: 140px;
-    left: 50%;
+    left: 54%;
     margin-left: -70px;
     bottom: 1em;
     list-style-type: none;
     z-index: 1;
 }
-#main-3 .carousal-nav .btn {
+#main-3 .nav .spot {
     float: left;
     width: 8px;
     height: 8px;
-    margin: 0 2px;
+    margin: 0 4px;
 }
-#main-3 .carousal-nav .btn:hover {
+#main-3 .nav .spot:hover {
     cursor: pointer;
 }
-
+#main-3 .config {
+    position: absolute;
+    top: 340px;
+    left: 110px;
+}
+#main-3 .config * {
+    margin-left: 3px;
+}
 /* @task4 */
 #main-4 .search {
     position: relative;
@@ -149,7 +159,7 @@
     margin-top: 40px;
     width: 560px;
 }
-#main-4 .box {
+#main-4 .input {
     float: left;
     width: 440px;
     height: 32px;
@@ -157,10 +167,10 @@
     
     border: 1px solid #c3c3c3;
 }
-#main-4 .box:hover {
+#main-4 .input:hover {
     border-color: #74ade6;
 }
-#main-4 .btn {
+#main-4 .submit {
     float: left;
     width: 100px;
     height: 34px;
@@ -168,7 +178,7 @@
     background-color: #74ade6;
     color: #fff;
 }
-#main-4 .btn:hover {
+#main-4 .submit:hover {
     background-color: #0666c6;
     cursor: pointer;
 }
@@ -222,4 +232,5 @@
     color: #fff;
     text-align: center;
     border: 1px solid #74ade6;
+    cursor: move;
 }

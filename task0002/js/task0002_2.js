@@ -1,3 +1,7 @@
+/*
+@param {string} input 
+@return {object} 输入若为有效日期则转换为Date对象返回之，否则返回null
+*/
 function strToDate(input) {
     if (isValidDate(input)) {
         var matches = input.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -5,7 +9,10 @@ function strToDate(input) {
     }
     return null;
 }
-
+/*
+@param {object} tarDate 
+@return {string} 目标日期与此刻时间之差，字符串形式
+*/
 function calculateDiff(tarDate) {
     var diffSec = (Date.parse(tarDate) - Date.parse(new Date())) / 1000;
     if (diffSec > 0) {
@@ -35,31 +42,26 @@ function calculateDiff(tarDate) {
         return '';
     }
 }
-
 $.on('.form-c .submit', 'click', function(){
-    var tarDate = strToDate($('#form-c .time').value);
+    var tarDate = strToDate($('.form-c .input').value);
     if (tarDate === null) {
-        $('.form-c .info').style.backgroundColor = 'red';
+        $('.form-c .info').style.backgroundColor = '#f36c60';
         setTimeout(function(){
-            $('.form-c .info').style.backgroundColor = 'antiquewhite';
-        }, 3000);
-    } else if (target instanceof Date) {        
-        $('.form-c .info').style.backgroundColor = 'antiquewhite';
-        var result = countTimeDiff(target);
-        if (result !== false) {
+            $('.form-c .info').style.backgroundColor = '#ffe082';
+        }, 2000);
+    }         
+    var result = calculateDiff(tarDate);
+    if (result !== '') {
+        $('.form-c .counter').innerHTML = result;
+    } else {
+        return false;
+    }            
+    var counterID = setInterval(function(){
+        result = calculateDiff(tarDate);
+        if (result !== '') {
             $('.form-c .counter').innerHTML = result;
         } else {
-            return false;
-        }            
-        var counterID = setInterval(function(){
-            result = countTimeDiff(target);
-            if (result !== false) {
-                $('.form-c .counter').innerHTML = result;
-            } else {
-                clearInterval(counterID);
-            }
-        }, 1000);                
-    }
+            clearInterval(counterID);
+        }
+    }, 1000);                
 });
-
-
