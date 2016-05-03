@@ -146,6 +146,7 @@ $.delegateByClassName('#main-3 .config', 'style', 'click', function(e){
     for (var i in radios) {
         if (radios[i].checked === true) {
             var interval = radios[i].value * 1000;
+            break;
         }
     }
     switch (et.value) {

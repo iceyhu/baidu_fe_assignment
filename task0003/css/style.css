@@ -1,4 +1,11 @@
-/* title bg #dddddd title #9b9b9b gen bg #f2f2f2 gen focus #ffffff hr vt line #cecece date bg #fafaee */
+/* 
+#dddddd title bg 
+#9b9b9b title 
+#f2f2f2 gen-bg 
+#ffffff gen-focus 
+#cecece hr vt border 
+#fafaee date-bg 
+*/
 * {
     margin: 0;
     padding: 0;
@@ -24,11 +31,25 @@ textarea {
     background-color: #f2f2f2;
 }
 #title {
+    position: relative;
     line-height: 59px;
     font-size: 20px;
     padding-left: 1em;
     border-bottom: 1px solid #cecece;
     color: #9b9b9b;
+}
+#title .btn {
+    position: absolute;
+    left: 140px;
+    top: 16px;
+    color: #fff;
+    background-color: #f36c60;
+    border: 1px solid #000;
+    font-size: 12px;
+    padding: 3px 5px;
+}
+#title .btn:hover {
+    cursor: pointer;
 }
 #category,
 #tasks,

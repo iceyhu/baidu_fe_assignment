@@ -80,7 +80,8 @@ var contentHtmlUtil = (function(){
         contentWhenAddingNew : ''
             + '<input type="input" class="title editable" placeholder="标题（22个字以内）" maxlength=22>'
             + '<input type="input" class="date editable" placeholder="日期（yyyy-mm-dd格式）" maxlength=10>'
-            + '<textarea class="main editable" placeholder="正文（500个字以内）" maxlength=500>'
+            + '<textarea class="main e
+        ditable" placeholder="正文（500个字以内）" maxlength=500>'
             + '</textarea>'
             + '<img class="save" src="img/icon-tick.png">'
             + '<img class="cancel" src="img/icon-times.png">',
@@ -394,9 +395,14 @@ function renderTasksList(status) {
 将高亮的li.task的title、date、main和done属性写入右侧框
 */
 function renderTask() {
-    var taskName = $('.tasklist .active').innerHTML;    
+    var activedTaskLi = $('.tasklist .active');  
+    if (!activedTaskLi) {
+        replaceContentHtml(contentHtmlUtil.contentOriginal, false);
+        return;
+    }
+    var tarTaskName = activedTaskLi.innerHTML;
     var tarTask = taskLib.filter(function(item){
-        return item.title === taskName;
+        return item.title === tarTaskName;
     })[0];
     if (tarTask === undefined) {
         replaceContentHtml(contentHtmlUtil.contentOriginal, false);
@@ -529,7 +535,7 @@ click .remove按钮上时confirm是否删除此cate，确认后删除该cate下�
 $.delegateByClassName('.catelist', 'remove', 'click', function(e){
     var et = e.target;
     var tarCateName = et.previousElementSibling.previousElementSibling.innerHTML;
-    var c = confirm('将同时删除分类「' + tarCateName + '」下的所有任务。继续吗？。');
+    var c = confirm('将同时删除分类「' + tarCateName + '」下的所有任务。继续吗？');
     if (c === true) {
         var tarCate = getCategoryByCateName(tarCateName);
         var tasksToDelete = tarCate.getTasksByStatus();
@@ -750,8 +756,6 @@ $.delegateByClassName('#content', 'editable', 'keyup', function(e){
 function loadFromCache() {
     var cateLibRaw = JSON.parse(localStorage.getItem('cateCache'));
     var taskLibRaw = JSON.parse(localStorage.getItem('taskCache'));
-	console.log(cateLibRaw)
-	console.log(taskLibRaw)
 	if (cateLibRaw === null) {
         addCategory(new Category('默认分类'));
         addCategory(new Category('Work'));
@@ -819,12 +823,10 @@ window.onload = function(){
     renderTasksList();
     renderTask(); 
 	// 清理缓存方法的绑定
-	$.click('#title', function(){
+	$.click('#title .btn', function(){
 		localStorage.clear();
 		showInfo('bad', '缓存已清理。');
 	});
-	// 提示清理缓存方法
-	showInfo('good', '点击「GTD Tools」可清理本地缓存。');
 };
 window.onresize = function(){
     resizeToWindowSize();
