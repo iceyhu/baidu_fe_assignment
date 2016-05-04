@@ -103,7 +103,7 @@ function addCategory(newCate) {
 /*
 @param {object} task1 Task实例
 @param {object} task2 Task实例
-@return {number} date属性去掉'-'后值较大的参数排在前面
+@return {number} 比较函数，date属性去掉'-'后值较大的参数排在前面
 */
 function dateDescending(task1, task2){
     if (task1.date.replace('-', '') > task2.date.replace('-', '')) {
@@ -112,16 +112,31 @@ function dateDescending(task1, task2){
         return 1;
     }
 }
+/*
+@param {string} taskName 要取得的任务对象名称
+@return {object} 含此任务的cate对象
+*/
 function getCateByTaskName(taskName) {
-    return taskLib.filter(function(item){
-        return item.done === false;
-    });    
+    return cateLib.filter(function(eachCate){
+        var curTaskArray = eachCate.tasks;
+        for (var i in curTaskArray) {
+            if (curTaskArray[i].title === taskName) {
+                return true;
+            }
+        }
+    })[0];    
 }
+
 /////////////////////////////
 ////////// 渲染对象 //////////
 /////////////////////////////
 
+/*
+将每个cate对象的name和其下undone的任务数量写入.content的html
+隐藏back按钮
+*/
 function renderCateList() {
+    $('.header .back').style.display = 'none';
     var html = '<ul class="catelist">';
     for (var i in cateLib) {
         var currCate = cateLib[i];
@@ -138,7 +153,12 @@ function renderCateList() {
     html += '</ul>';
     $('.content').innerHTML = html;
 }
+/*
+将目标cate下的所有任务的title和done属性写入.content的html
+显示back按钮
+*/
 function renderTaskList(cateName) {
+    $('.header .back').style.display = 'block';
     var tarCate = cateLib.filter(function(item){
         return item.name === cateName;
     })[0];
@@ -156,7 +176,12 @@ function renderTaskList(cateName) {
     html += '</ul>';
     $('.content').innerHTML = html;
 }
+/*
+将目标task的title，date和main属性写入.content的html
+显示back按钮
+*/
 function renderTask(taskName) {
+    $('.header .back').style.display = 'block';
     var tarTask = taskLib.filter(function(item){
         return item.title === taskName;
     })[0];
@@ -174,9 +199,20 @@ function renderTask(taskName) {
         + '</p>';
     $('.content').innerHTML = html;
 }
+
 /////////////////////////////
 ////////// 事件响应 //////////
 /////////////////////////////
+
+$.delegateByClassName('.content', 'tab', 'touchstart', function(e){
+    var et = e.target;
+    addClass(et, 'hover');
+});
+$.delegateByClassName('.content', 'tab', 'touchend', function(e){
+    var et = e.target;
+    removeClass(et, 'hover');
+});
+
 
 $.delegateByClassName('.content', 'cate', 'touchend', function(e){
     var et = e.target;
@@ -192,12 +228,11 @@ $.delegateByClassName('.content', 'task', 'touchend', function(e){
 });
 $.click('.header .back', function(){
     var currContent = $('.content').firstChild;
-            console.log(currContent)
     switch (true) {
         case hasClass(currContent, 'tasklist'):
             renderCateList();
             break;
-        case hasClass(currContent, 'task'):
+        case hasClass(currContent, 'title'):
             renderTaskList(getCateByTaskName(currContent.innerHTML).name);
             break;
     }
@@ -236,6 +271,4 @@ function forgeData() {
 window.onload = function(){
 	forgeData();
     renderCateList();
-    console.log(taskLib)
-
 };
