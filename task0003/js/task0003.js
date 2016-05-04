@@ -35,7 +35,7 @@ function resizeToWindowSize() {
     var d3 = $('#content');
     var d3in = $('#content .main');   
     wrap.style.width = wdWt + 'px';
-    d3.style.width = (wdWt - 460) + 'px';
+    d3.style.width = (wdWt - 480) + 'px';
     wrap.style.height = wdHt + 'px';        
     d2.style.height = d1.style.height = (wdHt - 60) + 'px'; 
     d2in.style.height = (wdHt - 140) + 'px';
@@ -80,8 +80,7 @@ var contentHtmlUtil = (function(){
         contentWhenAddingNew : ''
             + '<input type="input" class="title editable" placeholder="标题（22个字以内）" maxlength=22>'
             + '<input type="input" class="date editable" placeholder="日期（yyyy-mm-dd格式）" maxlength=10>'
-            + '<textarea class="main e
-        ditable" placeholder="正文（500个字以内）" maxlength=500>'
+            + '<textarea class="main editable" placeholder="正文（500个字以内）" maxlength=500>'
             + '</textarea>'
             + '<img class="save" src="img/icon-tick.png">'
             + '<img class="cancel" src="img/icon-times.png">',

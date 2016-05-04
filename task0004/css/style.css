@@ -1,0 +1,47 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Microsoft Yahei', sans-serif;
+}
+body {
+    background-color: #f5f5f5;
+}
+.header {
+    position: relative;
+    width: 100%;
+    line-height: 90px;
+    background-color: #5677fc;
+    text-align: center;
+    color: #fff;
+    font-weight: 700;
+}
+.header .back {
+    position: absolute;
+    left: 10px;
+    bottom: -28px;    
+    font-size: 14px;
+    font-weight: 400;
+}
+.tab {
+    position: relative;
+    display: block;
+    line-height: 58px;
+    border-bottom: 1px solid #cecece;
+    padding: 0 25px;
+}
+.cate .undone {
+    position: absolute;
+    width: 2em;
+    line-height: 1.2em;
+    top: 1.2em;
+    right: 2em;
+    color: #fff;
+    background-color: #cecece;
+    text-align: center;
+    border-radius: 40%;
+}
+.task.done,
+.title.done {
+    color: #42bd41;
+    text-decoration: line-through;
+}
