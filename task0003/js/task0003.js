@@ -9,8 +9,8 @@
 function showInfo(howItSounds, str) {
     var targetArea = 
         howItSounds === 'good'
-        ? $('.info-area.good')
-        : $('.info-area.bad');
+        ? $('.notif.good')
+        : $('.notif.bad');
     targetArea.innerHTML = str;
     setTimeout(function(){
         targetArea.innerHTML = '';
@@ -20,26 +20,21 @@ function showInfo(howItSounds, str) {
 部分内容宽度自适应
 */
 function resizeToWindowSize() {    
-    var wdWt = window.innerWidth;
-    var wdHt = window.innerHeight;
-    if (wdWt <= 900) {
-        wdWt = 900;
-    }
-    if (wdHt <= 600) {
-        wdHt = 600;
-    }
-    var wrap = $('#wrapper');    
-    var d1 = $('#category');    
-    var d2 = $('#tasks');     
-    var d2in = $('.tasklist');    
-    var d3 = $('#content');
-    var d3in = $('#content .main');   
-    wrap.style.width = wdWt + 'px';
-    d3.style.width = (wdWt - 480) + 'px';
-    wrap.style.height = wdHt + 'px';        
-    d2.style.height = d1.style.height = (wdHt - 60) + 'px'; 
-    d2in.style.height = (wdHt - 140) + 'px';
-    d3in.style.height = (wdHt - 200) + 'px';
+    var wdWt = 
+        window.innerWidth <= 900
+        ? 900
+        : window.innerWidth;
+    var wdHt = 
+        window.innerHeight <= 600
+        ? 600
+        : window.innerHeight;
+    $('#wrapper').style.width = wdWt + 'px';  
+    $('#wrapper').style.height = wdHt + 'px';    
+    $('#category').style.height =
+        $('#tasks').style.height = (wdHt - 60) + 'px'; 
+    $('.tasklist').style.height = (wdHt - 140) + 'px';
+    $('#content').style.width = (wdWt - 480) + 'px';
+    $('#content .main').style.height = (wdHt - 200) + 'px';   
 }
 /*
 将#content内容相关的html及方法储存在闭包对象中
