@@ -555,7 +555,7 @@ $.click('#category .add', function(e){
 	while (newCateName === '' 
 			|| newCateName.length > 8
 		  ) {
-	newCateName = prompt('分类名称长度应在1至8个字之间。');
+	   newCateName = prompt('分类名称长度应在1至8个字之间。');
 	}
 	if (newCateName === '所有任务') {
 		showInfo('bad', '不能给分类起这个名字。_(:зゝ∠)_')

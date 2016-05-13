@@ -613,7 +613,7 @@ function isValidDate(str) {
             var y = parseInt(RegExp.$1);
             var m = parseInt(RegExp.$3);
             var d = parseInt(RegExp.$4);
-            var md = (RegExp.$2);0
+            var md = (RegExp.$2);
             if (y !== 0 
                 && m !== 0
                 && d !== 0
