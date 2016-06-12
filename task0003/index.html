@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <title>task0003</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+        <link rel="stylesheet" href="css/style-updated.css">
+    </head>
+    <body>
+        <div id="cover"></div>
+        <div id="wrapper">
+            <p id="header">
+                GTD Tools
+                <span class="btn">清理缓存</span>
+            </p>         
+            <!--左侧开始-->
+            <div id="category">
+                <h1 class="title">
+					分类列表
+                </h1>  
+                <ul class="catelist">      
+					<li class="cate all">
+						<span class="name cate">所有任务</span>
+						<span class="undone cate">0</span>
+					</li>
+                </ul>
+                <p class="add">新增分类</p>
+            </div>
+            <!--左侧结束-->
+            <!--中部开始-->
+            <div id="tasks">
+                <ul class="status-nav">
+                    <li class="status all active">所有</li>                    
+                    <li class="status undone">未完成</li>                    
+                    <li class="status done">已完成</li>                    
+                </ul>
+                <div class="tasklist">
+                </div>
+                <p class="add">新增任务</p>
+            </div>
+            <!--中部结束-->
+            <!--右侧开始-->
+            <div id="content">
+                <h1 class="title">.</h1>
+                <h1 class="date">.</h1>
+                <p class="main">点击「新增任务」以创建新任务。</p>
+                <img class="mark" src="img/icon-done.png">
+                <img class="edit" src="img/icon-pencil.png">
+            </div>
+            <!--右侧结束-->
+            <p class="notif good"></p>
+            <p class="notif bad"></p>
+        </div> 
+        <script src="js/require.js" data-main="js/init.js"></script>
+<!--        <script src="js/init.js"></script>-->
+    </body>
+</html>
