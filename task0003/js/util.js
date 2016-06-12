@@ -396,9 +396,9 @@ define(function(){
     @return {boolean} 标题、日期和正文均符合输入要求时返回true；否则显示错误信息并返回false
     */
     function validateInput(tLib, alsoCheckDuplicate){
-        var t = trim2($('#content .title').value);
+        var t = trim($('#content .title').value);
         var d = $('#content .date').value;
-        var m = trim2($('#content .main').value);
+        var m = trim($('#content .main').value);
         if (!t.match(/^.{1,22}$/)) {
             showInfo('bad', '任务标题长度应在1至22字之间。')
             return false;

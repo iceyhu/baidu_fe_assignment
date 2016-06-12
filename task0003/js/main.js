@@ -577,9 +577,9 @@ define(['util'], function(util){
     click 新建或编辑任务时的.save按钮
     */
     $.delegateByClassName('#content', 'save', 'click', function(){
-        var taskName = trim2($('.title.editable').value);
+        var taskName = trim($('.title.editable').value);
         var taskDate = $('.date.editable').value;
-        var taskMain = trim2($('.main.editable').value);
+        var taskMain = trim($('.main.editable').value);
         switch (contentHtmlUtil.isEditing) {
             // 处于‘编辑’状态
             case true:
