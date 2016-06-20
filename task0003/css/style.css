@@ -183,7 +183,7 @@ span.undone {
 } 
 /* @content */
 #content {
-    width: 800px;
+/*    width: 800px;*/
     z-index: 2;
 }
 #content .title,

@@ -1,0 +1,258 @@
+/* 
+#dddddd title bg 
+#9b9b9b title 
+#f2f2f2 gen-bg 
+#ffffff gen-focus 
+#cecece hr vt border 
+#fafaee date-bg 
+*/
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1.7em;
+    font-family: 'Microsoft Yahei', sans-serif;
+    cursor: default;
+    list-style: none;
+}
+h1 {
+    line-height: 1.5em;
+    font-weight: 500;
+}
+input,
+textarea {
+    border: none;
+}
+/* z-index [1: #cover, 2: #content *, 3: .info-area] */
+#wrapper {
+    position: relative;
+    width: 1280px;
+    height: 600px;
+    background-color: #f2f2f2;
+}
+#title {
+    position: relative;
+    line-height: 59px;
+    font-size: 20px;
+    padding-left: 1em;
+    border-bottom: 1px solid #cecece;
+    color: #9b9b9b;
+}
+#title .btn {
+    position: absolute;
+    left: 140px;
+    top: 16px;
+    color: #fff;
+    background-color: #f36c60;
+    border: 1px solid #000;
+    font-size: 12px;
+    padding: 3px 5px;
+}
+#title .btn:hover {
+    cursor: pointer;
+}
+#category,
+#tasks,
+#content {
+    position: relative;
+    float: left;
+    height: 540px;
+}
+/* @category */
+#category {
+    width: 229px;
+    background-color: #f2f2f2;
+    border-right: 1px solid #cecece;
+}
+#category .title {
+    position: relative;
+    margin: 50px 0 10px;
+    line-height: 2em;
+    text-align: center;
+    background-color: #fafaee;
+    border-top: 1px solid #cecece;
+    border-bottom: 1px solid #cecece;
+    font-weight: 700;
+}
+.catelist {
+	position: relative;
+}
+li.cate {
+    position: relative;
+	width: 176px;
+    line-height: 30px;
+    background: url(../img/icon-folder.png) no-repeat 20px 50%;
+    padding-left: 53px;
+}
+li.cate.all {
+	position: absolute;
+	top: -80px;
+}
+li.cate.active {
+    background-color: #fff;
+}
+li.cate:hover,
+li.cate *:hover {	
+	cursor: pointer;
+}
+li.cate .remove {
+    display: none;
+    position: absolute;
+    top: 2px;
+    right: 0.3em;
+    cursor: pointer;
+}
+span.undone {
+    position: absolute;
+    width: 24px;
+    line-height: 1.4em;
+    top: 8px;
+    right: 2.5em;
+    text-align: center;
+    background-color: #cecece;
+    color: #fff;
+    border-radius: 40%;
+    font-size: 12px;
+}
+#category .add,
+#tasks .add {
+    position: absolute;
+    width: 174px;
+    bottom: 0;
+    padding-left: 55px;
+    line-height: 39px;
+    background: #f2f2f2 url(../img/icon-add.png) no-repeat 15px 50%;
+    border-top: 1px solid #cecece;
+}
+#category .add:hover,
+#tasks .add:hover {
+    cursor: pointer;
+    background-color: #fafaee;
+}
+/* @tasks */
+#tasks {
+    width: 229px;
+    border-right: 1px solid #cecece;
+}
+#tasks .status-nav {
+    padding-left: 1.1em;
+    border-bottom: 1px solid #cecece;
+}
+#tasks .status {
+    display: inline;
+    line-height: 40px;
+    margin: 5px;
+    padding: 0 0.5em;
+    border: 1px solid transparent;
+}
+#tasks .status.active {
+    background-color: #ffffff;
+    border-color: #cecece;
+}
+#tasks .status:hover {
+    cursor: pointer;
+}
+.tasklist {
+    background-color: #ffffff;
+}
+.tasklist .day {
+    list-style: none;
+}
+.tasklist .day .date {
+    line-height: 2em;
+    text-indent: 1em;
+    font-size: 12px;
+    background-color: #fafaee;
+    font-style: italic;
+}
+.tasklist .day .task {
+    line-height: 2em;
+    text-indent: 2.5em;
+    font-size: 12px;
+}
+.tasklist .day .task:hover {
+    cursor: pointer;
+} 
+.tasklist .day .task.active {
+    background-color: #c3c3c3;
+    color: #fff;
+}
+.tasklist .day .task.done {
+    color: #42bd41;
+    text-decoration: line-through;
+} 
+/* @content */
+#content {
+/*    width: 800px;*/
+    z-index: 2;
+}
+#content .title,
+#content .date,
+#content .main {
+    width: 100%;
+    line-height: 49px;
+    padding-left: 20px;
+    border-bottom: 1px solid #cecece;
+}
+#content .title {
+    font-size: 16px;
+    font-weight: 700;
+}
+#content .title.done {
+    text-decoration: line-through;
+    color: #42bd41;
+}
+#content .date {
+    background-color: #fafaee;
+    font-style: italic;
+}
+#content .main {
+    background-color: #ffffff;
+    height: 440px;
+}
+#content .title.editable,
+#content .date.editable,
+#content .main.editable {
+    color: #c3c3c3;
+    resize: none;
+}
+#content .mark, 
+#content .save {
+    position: absolute;
+    top: 12px;
+    right: 70px;
+    cursor: pointer;
+}
+#content .edit,
+#content .cancel {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    cursor: pointer;
+}
+/* @other */
+.info-area {
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    margin-left: -10em;
+    width: 20em;
+    line-height: 3em;
+    text-align: center;
+    color: #fff;
+    z-index: 3;
+}
+.bad {
+    background-color: #f36c60;
+}
+.good {
+    background-color: #42bd41;
+}
+#cover {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}

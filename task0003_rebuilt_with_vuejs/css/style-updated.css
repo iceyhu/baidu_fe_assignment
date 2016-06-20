@@ -1,0 +1,237 @@
+/* @util */
+/* @general */
+* {
+  margin: 0;
+  padding: 0;
+  line-height: 1.7;
+  font-family: 'Microsoft Yahei', sans-serif;
+  cursor: default;
+  list-style: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+#wrapper {
+  position: relative;
+  width: 1280px;
+  height: 600px;
+  background-color: #f2f2f2;
+}
+
+div#cover {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+p.notif {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  margin-left: -10em;
+  width: 20em;
+  line-height: 3;
+  text-align: center;
+  color: #fff;
+  z-index: 3;
+}
+p.notif.bad {
+  background-color: #e51c23;
+}
+p.notif.good {
+  background-color: #259b24;
+}
+
+p#header {
+  position: relative;
+  padding-left: 30px;
+  line-height: 59px;
+  font-size: 20px;
+  border-bottom: 1px solid #cecece;
+}
+p#header span.btn {
+  position: absolute;
+  left: 150px;
+  top: 16px;
+  padding: 3px;
+  color: #fff;
+  background-color: #e51c23;
+  border: 1px solid #cecece;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+div#category,
+div#tasks,
+div#content {
+  position: relative;
+  float: left;
+  height: 540px;
+}
+
+/* @category */
+div#category {
+  width: 229px;
+  border-right: 1px solid #cecece;
+}
+div#category h1.title {
+  position: relative;
+  margin: 50px 0 10px;
+  line-height: 2;
+  text-align: center;
+  background-color: #9b9b9b;
+  color: #fff;
+  font-weight: 700;
+}
+div#category ul.catelist {
+  position: relative;
+}
+div#category li.cate {
+  position: relative;
+  width: 176px;
+  line-height: 30px;
+  background: url(../img/icon-folder.png) no-repeat 20px 50%;
+  padding-left: 53px;
+  cursor: pointer;
+}
+div#category li.cate.all {
+  position: absolute;
+  top: -78px;
+}
+div#category li.cate.active {
+  background-color: #fff;
+}
+div#category li.cate * {
+  cursor: pointer;
+}
+div#category li.cate .remove {
+  display: none;
+  position: absolute;
+  top: 2px;
+  right: 3px;
+}
+div#category li.cate span.undone {
+  position: absolute;
+  width: 24px;
+  line-height: 1.4;
+  top: 8px;
+  right: 30px;
+  text-align: center;
+  background-color: #6ad7e5;
+  border-radius: 40%;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+p.add {
+  position: absolute;
+  width: 174px;
+  bottom: 0;
+  padding-left: 55px;
+  line-height: 39px;
+  background: url(../img/icon-add.png) no-repeat 15px 50%;
+  border-top: 1px solid #cecece;
+  cursor: pointer;
+}
+p.add:hover {
+  background-color: #6ad7e5;
+}
+
+/* @tasks */
+div#tasks {
+  width: 229px;
+  border-right: 1px solid #cecece;
+}
+div#tasks ul.status-nav {
+  padding-left: 25px;
+  border-bottom: 1px solid #cecece;
+}
+div#tasks li.status {
+  display: inline;
+  line-height: 40px;
+  margin-right: 5px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+div#tasks li.status.active {
+  background-color: #fff;
+  border-color: #cecece;
+}
+div#tasks div.tasklist {
+  background-color: #fff;
+}
+div#tasks div.tasklist h1.date {
+  line-height: 2;
+  text-indent: 1em;
+  font-size: 12px;
+  background-color: #fafaee;
+  font-style: italic;
+}
+div#tasks div.tasklist li.task {
+  line-height: 2;
+  text-indent: 2.5em;
+  font-size: 12px;
+  cursor: pointer;
+}
+div#tasks div.tasklist li.task.active {
+  background-color: #6ad7e5;
+  color: #fff;
+}
+div#tasks div.tasklist li.task.done {
+  color: #259b24;
+  text-decoration: line-through;
+}
+
+/* @content */
+div#content {
+  width: 800px;
+  z-index: 2;
+}
+div#content .title,
+div#content .date,
+div#content .main {
+  width: 100%;
+  line-height: 49px;
+  padding-left: 20px;
+  border-bottom: 1px solid #cecece;
+}
+div#content .title.editable,
+div#content .date.editable,
+div#content .main.editable {
+  color: #9b9b9b;
+  resize: none;
+}
+div#content .title {
+  font-size: 16px;
+  font-weight: 700;
+}
+div#content .title.done {
+  text-decoration: line-through;
+  color: #259b24;
+}
+div#content .date {
+  background-color: #fafaee;
+  font-style: italic;
+}
+div#content .main {
+  background-color: #fff;
+  height: 440px;
+}
+div#content img.mark, div#content img.edit,
+div#content img.cancel,
+div#content img.save {
+  position: absolute;
+  top: 12px;
+  right: 70px;
+  cursor: pointer;
+}
+div#content img.edit,
+div#content img.cancel {
+  right: 20px;
+}

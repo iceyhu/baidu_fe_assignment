@@ -353,7 +353,7 @@ function renderTasksList(status) {
         $('.tasklist').innerHTML = '';
     } else {
         // 获取符合参数条件的task的date属性，返回去重后的数组
-        var dateArray = uniqArrayHASH(taskArrInGivenStatus.map(function(item){
+        var dateArray = uniqArray(taskArrInGivenStatus.map(function(item){
             return item.date; 
         }));
         var html = '';
@@ -810,18 +810,16 @@ function saveToCache() {
 	localStorage.setItem('cateCache', JSON.stringify(cateLib));
 	localStorage.setItem('taskCache', JSON.stringify(taskLib));
 }
-window.onload = function(){
-    resizeToWindowSize();
-	loadFromCache();
-    renderCategoryList();
-    renderTasksList();
-    renderTask(); 
-	// 清理缓存方法的绑定
-	$.click('#title .btn', function(){
-		localStorage.clear();
-		showInfo('bad', '缓存已清理。');
-	});
-};
+resizeToWindowSize();
+loadFromCache();
+renderCategoryList();
+renderTasksList();
+renderTask(); 
+// 清理缓存方法的绑定
+$.click('#title .btn', function(){
+    localStorage.clear();
+    showInfo('bad', '缓存已清理。');
+});
 window.onresize = function(){
     resizeToWindowSize();
 };

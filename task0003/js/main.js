@@ -1,5 +1,5 @@
-define(['util'], function(util){
-   
+require(['util'], function(util){
+
     var $ = util.$;
     var hasClass = util.hasClass;
     var removeClass = util.removeClass;
@@ -739,19 +739,12 @@ define(['util'], function(util){
         localStorage.setItem('cateCache', JSON.stringify(cateLib));
         localStorage.setItem('taskCache', JSON.stringify(taskLib));
     }
-    /*
-    初始化
-    */    
-    function init(){
+
+    var init = (function(){
         resizeToWindowSize();
         loadFromCache();
         renderCategoryList();
         renderTasksList();
-        renderTask();         
-    };
-    
-    return {
-        init : init,
-    }
-    
+        renderTask();   
+    })();
 });
