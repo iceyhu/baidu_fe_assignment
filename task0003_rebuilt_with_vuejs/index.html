@@ -2,9 +2,10 @@
 <html lang="zh-cn">
     <head>
         <meta charset="utf-8">
-        <title>task0003</title>
+        <title>GTD Tools</title>
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-        <link rel="stylesheet" href="css/style-updated.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="shortcut icon" href="img/icon-pencil.png">
     </head>
     <body>
         <div id="cover"></div>
@@ -15,16 +16,28 @@
             </p>         
             <!--左侧开始-->
             <div id="category">
-                <h1 class="title">
+                <p class="cate syrw" @mouseover="hoverCateListener" @mouseout="hoverCateListener">
+					<span class="name">
+                        所有任务
+                    </span>
+                    <span class="undone">
+                        {{tasks.filterBy('undone').length}}
+                    </span>
+                </p>
+                <span class="fllb">
 					分类列表
-                </h1>  
+                </span> 
                 <ul class="catelist">      
-					<li class="cate all">
-						<span class="name cate">所有任务</span>
-						<span class="undone cate">0</span>
-					</li>
+                    <li v-for="cate in cates" @mouseover="hoverCateListener" @mouseout="hoverCateListener" class="cate">
+                        <span class="name">
+                            {{cate.name}}
+                        </span>
+                        <span class="undone">
+                            {{cate.getTasksBy('undone').length}}
+                        </span>
+                    </li>
                 </ul>
-                <p class="add">新增分类</p>
+                <p class="add" @click="clickAddListener">新增分类</p>
             </div>
             <!--左侧结束-->
             <!--中部开始-->
@@ -51,8 +64,8 @@
             <p class="notif good"></p>
             <p class="notif bad"></p>
         </div> 
-<!--        <script src="js/require.js" data-main="js/main.js"></script>-->
-        <script src="js/_util.js"></script>
-        <script src="js/task0003.js"></script>
+        <script src="js/vue.js"></script>
+        <script src="js/util_regular.js"></script>
+        <script src="js/main.js"></script>
     </body>
 </html>

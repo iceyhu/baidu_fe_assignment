@@ -128,9 +128,9 @@ function dateDescending(task1, task2){
 @return {boolean} 标题、日期和正文均符合输入要求时返回true；否则显示错误信息并返回false
 */
 function validateInput(alsoCheckDuplicate){
-    var t = trim2($('#content .title').value);
+    var t = trim($('#content .title').value);
     var d = $('#content .date').value;
-    var m = trim2($('#content .main').value);
+    var m = trim($('#content .main').value);
     if (!t.match(/^.{1,22}$/)) {
         showInfo('bad', '任务标题长度应在1至22字之间。')
         return false;
@@ -666,9 +666,9 @@ $.delegateByClassName('#content', 'edit', 'click', function(e){
 click 新建或编辑任务时的.save按钮
 */
 $.delegateByClassName('#content', 'save', 'click', function(){
-    var taskName = trim2($('.title.editable').value);
+    var taskName = trim($('.title.editable').value);
     var taskDate = $('.date.editable').value;
-    var taskMain = trim2($('.main.editable').value);
+    var taskMain = trim($('.main.editable').value);
     switch (contentHtmlUtil.isEditing) {
         // 处于‘编辑’状态
         case true:

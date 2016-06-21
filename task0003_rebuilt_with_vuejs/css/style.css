@@ -30,7 +30,7 @@ textarea {
     height: 600px;
     background-color: #f2f2f2;
 }
-#title {
+#header {
     position: relative;
     line-height: 59px;
     font-size: 20px;
@@ -38,7 +38,7 @@ textarea {
     border-bottom: 1px solid #cecece;
     color: #9b9b9b;
 }
-#title .btn {
+#header .btn {
     position: absolute;
     left: 140px;
     top: 16px;
@@ -48,7 +48,7 @@ textarea {
     font-size: 12px;
     padding: 3px 5px;
 }
-#title .btn:hover {
+#header .btn:hover {
     cursor: pointer;
 }
 #category,
@@ -77,23 +77,31 @@ textarea {
 .catelist {
 	position: relative;
 }
-li.cate {
+span.fllb,
+.cate {
+    display: block;
     position: relative;
 	width: 176px;
     line-height: 30px;
     background: url(../img/icon-folder.png) no-repeat 20px 50%;
     padding-left: 53px;
-}
-li.cate.all {
-	position: absolute;
-	top: -80px;
-}
-li.cate.active {
-    background-color: #fff;
-}
-li.cate:hover,
-li.cate *:hover {	
 	cursor: pointer;
+}
+.cate * {
+    cursor: pointer;
+}
+.cate.syrw {
+    top: 10px;
+}
+span.fllb {
+    width: 100%;
+    margin: 20px 0;
+    padding: 0;
+    text-align: center;
+    background: #ddd;
+}
+.cate.active {
+    background-color: #fff;
 }
 li.cate .remove {
     display: none;
@@ -114,8 +122,7 @@ span.undone {
     border-radius: 40%;
     font-size: 12px;
 }
-#category .add,
-#tasks .add {
+.add {
     position: absolute;
     width: 174px;
     bottom: 0;
@@ -123,11 +130,11 @@ span.undone {
     line-height: 39px;
     background: #f2f2f2 url(../img/icon-add.png) no-repeat 15px 50%;
     border-top: 1px solid #cecece;
+    transition: all 0.5s ease;
 }
-#category .add:hover,
-#tasks .add:hover {
+.add:hover {
     cursor: pointer;
-    background-color: #fafaee;
+    background-color: #ddd;
 }
 /* @tasks */
 #tasks {
@@ -231,13 +238,13 @@ span.undone {
     cursor: pointer;
 }
 /* @other */
-.info-area {
+.notif {
     position: absolute;
-    top: 9px;
+    top: 12px;
     left: 50%;
     margin-left: -10em;
     width: 20em;
-    line-height: 3em;
+    line-height: 2.5em;
     text-align: center;
     color: #fff;
     z-index: 3;

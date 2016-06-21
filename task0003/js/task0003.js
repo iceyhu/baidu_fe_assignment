@@ -128,9 +128,9 @@ function dateDescending(task1, task2){
 @return {boolean} 标题、日期和正文均符合输入要求时返回true；否则显示错误信息并返回false
 */
 function validateInput(alsoCheckDuplicate){
-    var t = trim2($('#content .title').value);
+    var t = trim($('#content .title').value);
     var d = $('#content .date').value;
-    var m = trim2($('#content .main').value);
+    var m = trim($('#content .main').value);
     if (!t.match(/^.{1,22}$/)) {
         showInfo('bad', '任务标题长度应在1至22字之间。')
         return false;
@@ -666,9 +666,9 @@ $.delegateByClassName('#content', 'edit', 'click', function(e){
 click 新建或编辑任务时的.save按钮
 */
 $.delegateByClassName('#content', 'save', 'click', function(){
-    var taskName = trim2($('.title.editable').value);
+    var taskName = trim($('.title.editable').value);
     var taskDate = $('.date.editable').value;
-    var taskMain = trim2($('.main.editable').value);
+    var taskMain = trim($('.main.editable').value);
     switch (contentHtmlUtil.isEditing) {
         // 处于‘编辑’状态
         case true:
@@ -773,35 +773,26 @@ function loadFromCache() {
         cateLib[3].addTask(trif1);
         cateLib[3].addTask(trif2);
     } else {
-		var taskLibUpdated = [];
-		for (var i in taskLibRaw) {
-			var currTaskRaw = taskLibRaw[i];
-			var currTask = new Task(currTaskRaw.title, currTaskRaw.date, currTaskRaw.main);
-			currTask.done = currTaskRaw.done;
-			taskLibUpdated.push(currTask);
-		}
-		taskLib = taskLibUpdated;
-		var cateLibUpdated = [];
-		for (var i in cateLibRaw) {
-			// 当前raw分类
-			var currCateRaw = cateLibRaw[i];
-			// 当前raw分类下的任务
-			var tasksInCurrCateRaw = currCateRaw.tasks;
-			// 以当前raw分类name新建的分类对象
-			var currCate = new Category(currCateRaw.name);
-			// 遍历raw分类下的任务
-			for (var i in tasksInCurrCateRaw) {
-				// 取得每个当前raw分类下的任务名称
-				var tarTaskName = tasksInCurrCateRaw[i].title;
-				// 为新分类对象的task数组添加已更新的taskLib中name与此任务名称相同的任务
-				currCate.tasks.push(taskLib.filter(function(item){
-					return item.title === tarTaskName;
-				})[0]);
-			}
-			cateLibUpdated.push(currCate);
-		}
-		cateLib = cateLibUpdated;
-	}
+        taskLib = [];
+        for (var i in taskLibRaw) {
+            var curTaskRaw = taskLibRaw[i];
+            var curTask = new Task(curTaskRaw.title, curTaskRaw.date, curTaskRaw.main);
+            curTask.done = curTaskRaw.done;
+            taskLib.push(curTask);
+        }
+        cateLib = [];
+        for (var i in cateLibRaw) {
+            var curCateRaw = cateLibRaw[i];
+            var curCate = new Category(curCateRaw.name);
+            for (var i in curCateRaw.tasks) {
+                var curTaskName = curCateRaw.tasks[i].title;
+                curCate.tasks.push(taskLib.filter(function(item){
+                    return item.title === curTaskName;
+                })[0]);
+            }
+            cateLib.push(curCate);
+        }
+    }
 }
 /*
 保存二容器至本地存储
